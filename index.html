@@ -52,7 +52,7 @@ header{text-align:center;padding:28px 0 20px;border-bottom:1px solid var(--line)
   background:var(--card);border:1px solid var(--line);border-radius:18px;
   padding:20px 18px 16px;margin-bottom:12px;
 }
-.clk-row{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.clk-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:16px}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--grn);
   box-shadow:0 0 8px var(--grn);flex-shrink:0;animation:blink 1.6s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
@@ -318,20 +318,26 @@ header{text-align:center;padding:28px 0 20px;border-bottom:1px solid var(--line)
       </div>
       <div id="todayList"></div>
     </div>
+    <!-- Salah tabs + masjid iqama cards -->
+    <div id="iqamaSection" style="display:none">
+      <div class="sec-lbl">🕌 Masjid Iqama Times</div>
+      <div class="stabs" id="stabs"></div>
+      <div class="mc-list" id="mcList"></div>
+    </div>
   </div>
 
-  <!-- ══ PAGE: MASAJID ══ -->
+  <!-- ══ PAGE: SETTINGS ══ -->
   <div class="page" id="pgMasajid">
 
-    <div class="stabs" id="stabs"></div>
+    <div class="sec-lbl" style="margin-top:4px">📍 Your Location</div>
 
     <button class="geo-btn" onclick="getLocation()">
-      <span>📍</span> Find Nearest Masjid
+      <span>📍</span> Use GPS
       <span class="geo-st" id="geoSt"></span>
     </button>
 
     <div class="loc-box" id="locBox">
-      <div class="loc-lbl">📍 Enter Location</div>
+      <div class="loc-lbl">Or paste from Google Maps</div>
       <div class="loc-hint">Open Google Maps → long press your spot → tap the coordinates at top to copy → paste below</div>
       <input class="loc-input" id="locInput" type="text"
         placeholder="23.5880, 58.3829" inputmode="decimal"
@@ -342,6 +348,8 @@ header{text-align:center;padding:28px 0 20px;border-bottom:1px solid var(--line)
       </div>
       <div class="loc-msg" id="locMsg"></div>
     </div>
+
+    <div class="sec-lbl">📋 Masjid Data</div>
 
     <div class="saved" id="savedBadge">
       <span class="saved-txt" id="savedTxt"></span>
@@ -361,8 +369,6 @@ Isha: 20:20</code>
       </div>
     </div>
 
-    <div class="mc-list" id="mcList"></div>
-
   </div><!-- /pgMasajid -->
 
 </div><!-- /wrap -->
@@ -372,7 +378,7 @@ Isha: 20:20</code>
     <span class="nav-icon">🕐</span>Times
   </button>
   <button class="nav-btn" id="navMasajid" onclick="showPage('Masajid')">
-    <span class="nav-icon">🕌</span>Masajid
+    <span class="nav-icon">⚙️</span>Settings
   </button>
 </nav>
 
@@ -673,6 +679,7 @@ function clearMasajid() {
   localStorage.removeItem('masajid_fname');
   masajid=[];
   document.getElementById('mcList').innerHTML='';
+  document.getElementById('iqamaSection').style.display='none';
   document.getElementById('dropZone').style.display='';
   document.getElementById('savedBadge').classList.remove('on');
 }
@@ -731,7 +738,12 @@ function parseMasajid(txt) {
 // ═══════════════════════════
 function renderMasajid() {
   const list=document.getElementById('mcList');
-  if(!masajid.length){list.innerHTML='';return;}
+  if(!masajid.length){
+    list.innerHTML='';
+    document.getElementById('iqamaSection').style.display='none';
+    return;
+  }
+  document.getElementById('iqamaSection').style.display='block';
   document.getElementById('dropZone').style.display='none';
 
   const sorted=masajid.map((m,i)=>({...m,idx:i}));
@@ -896,4 +908,5 @@ fetchMasajidFromGitHub();
 </script>
 </body>
 </html>
+
 
