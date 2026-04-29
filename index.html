@@ -11,473 +11,347 @@
 @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap');
 
 :root {
-  --bg:    #07090f;
-  --card:  #0e1420;
-  --card2: #131a28;
-  --line:  rgba(255,255,255,.07);
-  --gold:  #c9a84c;
-  --gold2: #e2c46a;
-  --gdim:  rgba(201,168,76,.10);
-  --teal:  #38c9ad;
-  --tdim:  rgba(56,201,173,.10);
-  --text:  #e0d8ca;
-  --dim:   #566070;
-  --green: #43c678;
-  --org:   #f09348;
-  --red:   #e05c5c;
-  --safe:  env(safe-area-inset-bottom, 0px);
+  --bg:   #07090f;
+  --card: #0e1420;
+  --c2:   #131a28;
+  --line: rgba(255,255,255,.07);
+  --gold: #c9a84c;
+  --g2:   #e2c46a;
+  --gdim: rgba(201,168,76,.10);
+  --teal: #38c9ad;
+  --tdim: rgba(56,201,173,.10);
+  --text: #e0d8ca;
+  --dim:  #566070;
+  --grn:  #43c678;
+  --org:  #f09348;
+  --red:  #e05c5c;
+  --safe: env(safe-area-inset-bottom, 0px);
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html { font-size: 16px; }
-body {
-  background: var(--bg); color: var(--text);
-  font-family: 'Inter', sans-serif;
-  min-height: 100vh; overflow-x: hidden;
-  padding-bottom: calc(72px + var(--safe));
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
+  min-height:100vh;overflow-x:hidden;
+  padding-bottom:calc(68px + var(--safe));
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;right:0;height:260px;
+  background:radial-gradient(ellipse 100% 100% at 50% -20%,rgba(201,168,76,.07),transparent);
+  pointer-events:none;z-index:0;
+}
+.wrap{position:relative;z-index:1;max-width:430px;margin:0 auto;padding:0 16px}
+
+/* ── HEADER ── */
+header{text-align:center;padding:28px 0 20px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.t-ar{font-family:'Amiri',serif;font-size:2.2rem;color:var(--g2);
+  text-shadow:0 0 40px rgba(201,168,76,.3);line-height:1}
+.t-en{font-size:.62rem;letter-spacing:.2em;color:var(--dim);margin-top:4px;text-transform:uppercase}
+
+/* ── CLOCK ── */
+.clock{
+  background:var(--card);border:1px solid var(--line);border-radius:18px;
+  padding:20px 18px 16px;margin-bottom:12px;
+}
+.clk-row{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--grn);
+  box-shadow:0 0 8px var(--grn);flex-shrink:0;animation:blink 1.6s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.clk-time{font-family:'DM Mono',monospace;font-size:2.8rem;font-weight:500;
+  color:var(--g2);letter-spacing:.04em;line-height:1;}
+.clk-dates{
+  display:flex;align-items:baseline;justify-content:space-between;
+  margin-bottom:8px;flex-wrap:wrap;gap:4px;
+}
+.clk-date{font-size:.75rem;color:var(--dim)}
+.clk-hijri{font-family:'Amiri',serif;font-size:.95rem;color:var(--gold);opacity:.85}
+
+/* Next salah — big and clear */
+.next-row{
+  border-top:1px solid var(--line);padding-top:14px;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+.nxt-left{}
+.nxt-lbl{font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);margin-bottom:2px}
+.nxt-ar{font-family:'Amiri',serif;font-size:1.6rem;color:var(--text);line-height:1}
+.nxt-en{font-size:.65rem;color:var(--dim);margin-top:1px}
+.nxt-cd{
+  font-family:'DM Mono',monospace;font-size:2.6rem;font-weight:500;
+  color:var(--teal);letter-spacing:.02em;text-align:right;
+}
+.nxt-cd.soon{color:var(--org)}
+.nxt-cd.imm{color:var(--red);animation:pulse .8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* ── TODAY PRAYERS ── */
+.today{
+  background:var(--card);border:1px solid var(--line);border-radius:18px;
+  overflow:hidden;margin-bottom:12px;
+}
+.today-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 18px;border-bottom:1px solid var(--line);
+}
+.today-lbl{font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.today-dt{font-size:.68rem;color:var(--dim)}
+
+.pr-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;transition:background .15s;
+}
+.pr-row:not(:last-child){border-bottom:1px solid var(--line)}
+.pr-row.is-next{background:rgba(56,201,173,.06)}
+.pr-row.is-past .pr-ar,.pr-row.is-past .pr-en,.pr-row.is-past .pr-t{opacity:.3}
+.pr-left{display:flex;align-items:center;gap:12px}
+.pr-pip{width:6px;height:6px;border-radius:50%;background:var(--line);flex-shrink:0}
+.pr-row.is-next .pr-pip{background:var(--teal);box-shadow:0 0 6px var(--teal)}
+.pr-row.is-past .pr-pip{background:transparent}
+.pr-ar{font-family:'Amiri',serif;font-size:1.1rem;color:var(--text);line-height:1.1}
+.pr-en{font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:var(--dim)}
+.pr-right{display:flex;align-items:center;gap:10px}
+.pr-t{font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--g2);font-weight:500}
+.next-tag{
+  font-size:.52rem;font-weight:700;letter-spacing:.07em;
+  background:var(--tdim);color:var(--teal);
+  border:1px solid rgba(56,201,173,.25);border-radius:8px;padding:2px 7px;
 }
 
-/* subtle top glow */
-body::before {
-  content: ''; position: fixed; top: 0; left: 0; right: 0; height: 300px;
-  background: radial-gradient(ellipse 100% 100% at 50% -20%, rgba(201,168,76,.08), transparent);
-  pointer-events: none; z-index: 0;
+/* ── MASAJID PAGE ── */
+.sec-lbl{
+  font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--dim);margin-bottom:12px;margin-top:4px;
+  display:flex;align-items:center;gap:8px;
+}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--line)}
+
+/* Salah tabs */
+.stabs{
+  display:flex;gap:7px;overflow-x:auto;margin-bottom:14px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px;
+}
+.stabs::-webkit-scrollbar{display:none}
+.stab{
+  display:flex;flex-direction:column;align-items:center;gap:1px;
+  padding:10px 14px;border-radius:12px;border:1px solid var(--line);
+  background:var(--card);cursor:pointer;flex-shrink:0;transition:all .18s;
+}
+.stab:active{transform:scale(.95)}
+.stab.on{background:var(--gdim);border-color:var(--gold)}
+.stab-ar{font-family:'Amiri',serif;font-size:1rem;color:var(--dim)}
+.stab-en{font-size:.55rem;text-transform:uppercase;letter-spacing:.1em;color:var(--dim)}
+.stab.on .stab-ar{color:var(--g2)}
+.stab.on .stab-en{color:var(--gold)}
+
+/* Geo */
+.geo-btn{
+  display:flex;align-items:center;gap:8px;width:100%;
+  padding:13px 16px;border-radius:12px;border:1px solid var(--line);
+  background:var(--card);color:var(--teal);font-family:'Inter',sans-serif;
+  font-size:.8rem;cursor:pointer;margin-bottom:10px;transition:background .18s;
+  text-align:left;
+}
+.geo-btn:active{background:var(--tdim)}
+.geo-st{font-size:.66rem;color:var(--dim);margin-left:auto}
+
+/* Loc box */
+.loc-box{
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:16px;margin-bottom:12px;
+}
+.loc-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.13em;color:var(--dim);margin-bottom:4px}
+.loc-hint{font-size:.68rem;color:var(--dim);line-height:1.5;margin-bottom:10px}
+.loc-input{
+  width:100%;background:var(--c2);border:1px solid var(--line);border-radius:9px;
+  color:var(--text);font-family:'DM Mono',monospace;font-size:.95rem;
+  padding:12px 14px;outline:none;margin-bottom:10px;-webkit-appearance:none;
+  transition:border-color .18s;
+}
+.loc-input:focus{border-color:var(--gold)}
+.loc-btns{display:flex;gap:8px}
+.loc-set{
+  flex:1;background:var(--gdim);border:1px solid var(--gold);border-radius:9px;
+  color:var(--g2);font-family:'Inter',sans-serif;font-size:.8rem;
+  padding:11px;cursor:pointer;font-weight:600;
+}
+.loc-muscat{
+  background:var(--c2);border:1px solid var(--line);border-radius:9px;
+  color:var(--dim);font-family:'Inter',sans-serif;font-size:.75rem;
+  padding:11px 13px;cursor:pointer;white-space:nowrap;
+}
+.loc-msg{font-size:.7rem;margin-top:8px;min-height:16px;color:var(--dim)}
+
+/* Saved badge */
+.saved{
+  display:none;align-items:center;justify-content:space-between;
+  background:rgba(67,198,120,.07);border:1px solid rgba(67,198,120,.2);
+  border-radius:12px;padding:11px 14px;margin-bottom:10px;gap:10px;
+}
+.saved.on{display:flex}
+.saved-txt{font-size:.74rem;color:var(--grn)}
+.saved-clr{
+  font-family:'Inter',sans-serif;font-size:.65rem;color:var(--dim);
+  background:none;border:1px solid var(--line);border-radius:7px;
+  padding:4px 10px;cursor:pointer;white-space:nowrap;flex-shrink:0;
 }
 
-.wrap { position: relative; z-index: 1; max-width: 430px; margin: 0 auto; padding: 0 18px; }
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   HEADER
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-header {
-  text-align: center; padding: 32px 0 24px;
-  border-bottom: 1px solid var(--line); margin-bottom: 20px;
+/* Upload box */
+.upload{
+  border:2px dashed var(--line);border-radius:16px;padding:24px 18px;
+  text-align:center;background:var(--card);cursor:pointer;
+  transition:border-color .18s;position:relative;margin-bottom:12px;
 }
-.title-ar {
-  font-family: 'Amiri', serif; font-size: 2.4rem; color: var(--gold2);
-  text-shadow: 0 0 48px rgba(201,168,76,.35); line-height: 1;
-}
-.title-en { font-size: .68rem; letter-spacing: .2em; color: var(--dim); margin-top: 5px; text-transform: uppercase; }
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   CLOCK BLOCK  (full width, stacked)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-.clock-block {
-  background: var(--card); border: 1px solid var(--line);
-  border-radius: 18px; padding: 22px 20px 18px; margin-bottom: 14px;
-}
-.clock-top { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-.live-dot {
-  width: 8px; height: 8px; border-radius: 50%; background: var(--green);
-  box-shadow: 0 0 8px var(--green); flex-shrink: 0;
-  animation: blink 1.6s ease-in-out infinite;
-}
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
-.clock-time {
-  font-family: 'DM Mono', monospace; font-size: 3rem; font-weight: 500;
-  color: var(--gold2); letter-spacing: .04em; line-height: 1;
-  flex: 1;
-}
-.clock-meta { text-align: right; }
-.clock-date { font-size: .72rem; color: var(--dim); line-height: 1.5; }
-.clock-hijri { font-family: 'Amiri', serif; font-size: .95rem; color: var(--gold); opacity: .8; }
-
-/* NEXT SALAH — prominent, below clock */
-.next-salah {
-  border-top: 1px solid var(--line); padding-top: 14px;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.ns-left {}
-.ns-label { font-size: .6rem; letter-spacing: .15em; text-transform: uppercase; color: var(--dim); margin-bottom: 3px; }
-.ns-name { font-family: 'Amiri', serif; font-size: 1.5rem; color: var(--text); line-height: 1; }
-.ns-name-en { font-size: .68rem; color: var(--dim); margin-top: 1px; }
-.ns-cd {
-  font-family: 'DM Mono', monospace; font-size: 2.4rem; font-weight: 500;
-  color: var(--teal); letter-spacing: .03em; text-align: right;
-}
-.ns-cd.soon { color: var(--org); }
-.ns-cd.imm  { color: var(--red); animation: pulse .8s ease-in-out infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   TODAY PRAYERS  — vertical list
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-.today-block {
-  background: var(--card); border: 1px solid var(--line);
-  border-radius: 18px; overflow: hidden; margin-bottom: 14px;
-}
-.today-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 18px 12px; border-bottom: 1px solid var(--line);
-}
-.today-label { font-size: .62rem; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
-.today-date-str { font-size: .7rem; color: var(--dim); }
-
-.prayer-row {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 13px 18px; transition: background .15s;
-}
-.prayer-row:not(:last-child) { border-bottom: 1px solid var(--line); }
-.prayer-row.active { background: rgba(201,168,76,.08); }
-.prayer-row.past .pr-ar, .prayer-row.past .pr-en, .prayer-row.past .pr-time { opacity: .35; }
-
-.pr-left { display: flex; align-items: center; gap: 12px; }
-.pr-dot {
-  width: 6px; height: 6px; border-radius: 50%; background: var(--line);
-  flex-shrink: 0; transition: background .2s;
-}
-.prayer-row.active .pr-dot { background: var(--gold); box-shadow: 0 0 6px var(--gold); }
-.prayer-row.next .pr-dot  { background: var(--teal); box-shadow: 0 0 6px var(--teal); }
-
-.pr-names {}
-.pr-ar { font-family: 'Amiri', serif; font-size: 1.1rem; color: var(--text); line-height: 1.1; }
-.pr-en { font-size: .6rem; text-transform: uppercase; letter-spacing: .1em; color: var(--dim); }
-
-.pr-time {
-  font-family: 'DM Mono', monospace; font-size: 1.25rem; font-weight: 500; color: var(--gold2);
-}
-.prayer-row.active .pr-time { color: var(--gold2); }
-.next-badge {
-  font-size: .55rem; background: var(--tdim); color: var(--teal);
-  border: 1px solid rgba(56,201,173,.25); border-radius: 10px;
-  padding: 2px 7px; letter-spacing: .06em; font-weight: 600; margin-left: 8px;
+.upload:active{border-color:var(--gold)}
+.upload input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.upload-icon{font-size:1.8rem;margin-bottom:6px;opacity:.45}
+.upload-txt{font-size:.75rem;color:var(--dim);line-height:1.6}
+.upload-txt code{
+  display:block;margin-top:10px;text-align:left;
+  font-family:'DM Mono',monospace;font-size:.62rem;
+  background:var(--c2);border-radius:8px;padding:10px 12px;
+  border:1px solid var(--line);color:var(--teal);line-height:1.8;
+  white-space:pre;overflow-x:auto;
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   MONTH SWITCHER
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-.month-scroll {
-  display: flex; gap: 0; overflow-x: auto; overflow-y: hidden;
-  background: var(--card); border: 1px solid var(--line); border-radius: 14px;
-  margin-bottom: 6px; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+/* Masjid cards */
+.mc-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.mc{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.mc.near{border-color:rgba(56,201,173,.35)}
+.mc-name-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 16px 11px;border-bottom:1px solid var(--line);
 }
-.month-scroll::-webkit-scrollbar { display: none; }
-.mbtn {
-  font-family: 'Inter', sans-serif; font-size: .72rem; font-weight: 500;
-  padding: 11px 13px; border: none; background: transparent; color: var(--dim);
-  cursor: pointer; white-space: nowrap; flex-shrink: 0;
-  border-bottom: 2px solid transparent; transition: color .15s;
+.mc-name{font-size:.9rem;font-weight:600;color:var(--text)}
+.mc-tags{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.mc-dist{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--teal)}
+.nr-tag{
+  font-size:.52rem;font-weight:700;letter-spacing:.07em;
+  background:var(--tdim);color:var(--teal);
+  border:1px solid rgba(56,201,173,.25);border-radius:7px;padding:2px 6px;
 }
-.mbtn.active { color: var(--gold2); border-bottom-color: var(--gold); }
-.mbtn.cached::after { content: '·'; color: var(--green); margin-left: 2px; }
+.mc-body{padding:16px}
+.mc-iq-lbl{font-size:.58rem;text-transform:uppercase;letter-spacing:.13em;color:var(--dim);margin-bottom:5px}
+.mc-iq-time{font-family:'DM Mono',monospace;font-size:2.4rem;font-weight:500;
+  color:var(--text);letter-spacing:.02em;line-height:1;margin-bottom:10px}
+.mc-cd-row{display:flex;align-items:baseline;gap:7px}
+.mc-cd-lbl{font-size:.58rem;text-transform:uppercase;letter-spacing:.12em;color:var(--dim)}
+.mc-cd{font-family:'DM Mono',monospace;font-size:1.5rem;font-weight:500;letter-spacing:.02em}
+.mc-cd.live{color:var(--teal)}
+.mc-cd.soon{color:var(--org)}
+.mc-cd.imm{color:var(--red);animation:pulse .8s ease-in-out infinite}
+.mc-cd.done{color:var(--dim);font-size:.9rem;font-style:italic}
+.mc-none{font-size:.75rem;color:var(--dim);font-style:italic;padding:2px 0}
 
-.fetch-status {
-  display: flex; align-items: center; gap: 6px;
-  padding: 5px 4px 10px; font-size: .66rem; color: var(--dim);
+/* Error */
+.parse-err{
+  background:rgba(224,92,92,.07);border:1px solid rgba(224,92,92,.2);
+  border-radius:12px;padding:14px 16px;margin-bottom:10px;
 }
-.spinner {
-  width: 10px; height: 10px; border: 1.5px solid var(--line); border-top-color: var(--gold);
-  border-radius: 50%; animation: spin .7s linear infinite; display: none; flex-shrink: 0;
-}
-.spinner.on { display: block; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   MONTHLY TABLE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-.table-block {
-  background: var(--card); border: 1px solid var(--line);
-  border-radius: 18px; overflow: hidden; margin-bottom: 20px;
-}
-.table-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 13px 18px; border-bottom: 1px solid var(--line);
-}
-.table-ttl { font-size: .68rem; letter-spacing: .13em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
-.table-src { font-size: .6rem; color: var(--dim); }
-.tscroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-table { width: 100%; border-collapse: collapse; min-width: 300px; }
-thead th {
-  padding: 9px 10px; font-size: .58rem; text-transform: uppercase;
-  letter-spacing: .1em; color: var(--dim); font-weight: 600; text-align: center;
-  border-bottom: 1px solid var(--line); white-space: nowrap;
-}
-thead th:first-child { text-align: left; }
-tbody tr:not(:last-child) { border-bottom: 1px solid rgba(255,255,255,.03); }
-tbody tr:hover { background: rgba(255,255,255,.02); }
-tbody tr.tr-today { background: rgba(201,168,76,.07) !important; }
-tbody tr.tr-today td { color: var(--gold2); }
-tbody tr.tr-today td:first-child { color: var(--gold); font-weight: 600; }
-td { padding: 8px 10px; font-size: .76rem; text-align: center; font-family: 'DM Mono', monospace; white-space: nowrap; }
-td:first-child { text-align: left; font-family: 'Inter', sans-serif; font-size: .68rem; color: var(--dim); }
-.today-pip {
-  display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-  background: var(--gold); margin-left: 6px; vertical-align: middle;
+.parse-err-ttl{font-size:.76rem;color:var(--red);font-weight:600;margin-bottom:6px}
+.parse-err-body{font-size:.68rem;color:var(--dim);line-height:1.6;margin-bottom:8px}
+.parse-err-pre{
+  font-family:'DM Mono',monospace;font-size:.62rem;color:var(--teal);
+  background:var(--c2);border-radius:7px;padding:8px 10px;
+  white-space:pre-wrap;word-break:break-all;line-height:1.6;
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   ERROR
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-.err-box {
-  background: rgba(224,92,92,.07); border: 1px solid rgba(224,92,92,.2);
-  border-radius: 12px; padding: 12px 16px; font-size: .75rem; color: var(--red);
-  margin-bottom: 12px; display: none;
+/* Bottom nav */
+.nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:rgba(7,9,15,.93);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);display:flex;padding-bottom:var(--safe);
 }
-.err-box.on { display: block; }
+.nav-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;padding:10px 6px;background:none;border:none;color:var(--dim);
+  font-family:'Inter',sans-serif;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;
+  cursor:pointer;transition:color .15s;
+}
+.nav-btn:active{transform:scale(.93)}
+.nav-btn.on{color:var(--g2)}
+.nav-icon{font-size:1.35rem;line-height:1}
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   MASAJID PAGE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-.salah-tabs {
-  display: flex; gap: 8px; overflow-x: auto; margin-bottom: 16px;
-  scrollbar-width: none; -webkit-overflow-scrolling: touch; padding-bottom: 2px;
-}
-.salah-tabs::-webkit-scrollbar { display: none; }
-.stab {
-  display: flex; flex-direction: column; align-items: center; gap: 1px;
-  padding: 10px 16px; border-radius: 12px; border: 1px solid var(--line);
-  background: var(--card); cursor: pointer; flex-shrink: 0; transition: all .2s;
-}
-.stab:active { transform: scale(.96); }
-.stab.active { background: var(--gdim); border-color: var(--gold); }
-.stab-ar { font-family: 'Amiri', serif; font-size: 1rem; color: var(--dim); }
-.stab-en { font-size: .58rem; text-transform: uppercase; letter-spacing: .1em; color: var(--dim); }
-.stab.active .stab-ar { color: var(--gold2); }
-.stab.active .stab-en { color: var(--gold); }
+/* Pages */
+.page{display:none}.page.on{display:block}
 
-/* GEO BUTTON */
-.geo-btn {
-  display: flex; align-items: center; gap: 8px; width: 100%;
-  padding: 13px 18px; border-radius: 12px; border: 1px solid var(--line);
-  background: var(--card); color: var(--teal); font-family: 'Inter', sans-serif;
-  font-size: .8rem; cursor: pointer; margin-bottom: 12px; transition: background .2s;
+/* Spinner */
+.spinner{
+  display:inline-block;width:14px;height:14px;border:2px solid var(--line);
+  border-top-color:var(--gold);border-radius:50%;
+  animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;
 }
-.geo-btn:active { background: var(--tdim); transform: scale(.98); }
-.geo-st { font-size: .68rem; color: var(--dim); margin-left: auto; }
-
-/* SAVED BADGE */
-.saved-badge {
-  display: none; align-items: center; justify-content: space-between;
-  background: rgba(67,198,120,.07); border: 1px solid rgba(67,198,120,.22);
-  border-radius: 12px; padding: 11px 16px; margin-bottom: 12px; gap: 10px;
-}
-.saved-badge.on { display: flex; }
-.saved-txt { font-size: .74rem; color: var(--green); }
-.clear-btn {
-  font-family: 'Inter', sans-serif; font-size: .65rem; color: var(--dim);
-  background: none; border: 1px solid var(--line); border-radius: 7px;
-  padding: 4px 10px; cursor: pointer; white-space: nowrap; flex-shrink: 0;
-}
-.clear-btn:active { color: var(--red); border-color: rgba(224,92,92,.3); }
-
-/* UPLOAD BOX */
-.upload-box {
-  border: 2px dashed var(--line); border-radius: 16px; padding: 28px 20px;
-  text-align: center; background: var(--card); cursor: pointer;
-  transition: border-color .2s; position: relative; margin-bottom: 14px;
-}
-.upload-box:active { border-color: var(--gold); }
-.upload-box input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
-.upload-icon { font-size: 2rem; margin-bottom: 8px; opacity: .5; }
-.upload-text { font-size: .78rem; color: var(--dim); line-height: 1.6; }
-.upload-text code {
-  display: block; margin-top: 12px; text-align: left;
-  font-family: 'DM Mono', monospace; font-size: .65rem;
-  background: var(--card2); border-radius: 10px; padding: 12px 14px;
-  border: 1px solid var(--line); color: var(--teal); line-height: 1.8;
-  white-space: pre; overflow-x: auto;
-}
-
-/* MASJID CARDS */
-.masjid-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
-
-.mc {
-  background: var(--card); border: 1px solid var(--line);
-  border-radius: 18px; overflow: hidden;
-}
-.mc.nearest { border-color: rgba(56,201,173,.35); }
-
-/* Masjid name row */
-.mc-name-row {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 15px 18px 13px; border-bottom: 1px solid var(--line);
-}
-.mc-name { font-size: .92rem; font-weight: 600; color: var(--text); }
-.mc-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.mc-dist { font-family: 'DM Mono', monospace; font-size: .68rem; color: var(--teal); }
-.nr-tag {
-  font-size: .55rem; font-weight: 700; letter-spacing: .07em;
-  background: var(--tdim); color: var(--teal);
-  border: 1px solid rgba(56,201,173,.25); border-radius: 8px; padding: 2px 7px;
-}
-
-/* Iqama time + countdown — the main content */
-.mc-body { padding: 18px 18px 16px; }
-
-.mc-iqama-label {
-  font-size: .6rem; text-transform: uppercase; letter-spacing: .15em; color: var(--dim); margin-bottom: 6px;
-}
-.mc-iqama-time {
-  font-family: 'DM Mono', monospace; font-size: 2.6rem; font-weight: 500;
-  color: var(--text); letter-spacing: .03em; line-height: 1; margin-bottom: 12px;
-}
-.mc-cd-row { display: flex; align-items: baseline; gap: 8px; }
-.mc-cd-label { font-size: .62rem; text-transform: uppercase; letter-spacing: .12em; color: var(--dim); }
-.mc-cd {
-  font-family: 'DM Mono', monospace; font-size: 1.6rem; font-weight: 500; letter-spacing: .03em;
-}
-.mc-cd.live { color: var(--teal); }
-.mc-cd.soon { color: var(--org); }
-.mc-cd.imm  { color: var(--red); animation: pulse .8s ease-in-out infinite; }
-.mc-cd.done { color: var(--dim); font-size: 1rem; }
-
-.mc-no-iqama { font-size: .78rem; color: var(--dim); font-style: italic; padding: 4px 0; }
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   BOTTOM NAV
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-.bot-nav {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-  background: rgba(7,9,15,.92); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  border-top: 1px solid var(--line);
-  display: flex; padding-bottom: var(--safe);
-}
-.bn {
-  flex: 1; display: flex; flex-direction: column; align-items: center;
-  justify-content: center; gap: 4px; padding: 10px 6px;
-  background: none; border: none; color: var(--dim); cursor: pointer;
-  font-family: 'Inter', sans-serif; font-size: .58rem; letter-spacing: .1em;
-  text-transform: uppercase; transition: color .15s;
-}
-.bn:active { transform: scale(.94); }
-.bn.active { color: var(--gold2); }
-.bn-icon { font-size: 1.4rem; line-height: 1; }
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   PAGES
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-.page { display: none; }
-.page.on { display: block; }
-
-::-webkit-scrollbar { width: 4px; height: 4px; }
-::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <header>
-    <div class="title-ar">أوقات الصلاة</div>
-    <div class="title-en">Prayer Times · Muscat, Oman</div>
+    <div class="t-ar">أوقات الصلاة</div>
+    <div class="t-en">Prayer Times · Muscat, Oman</div>
   </header>
 
-  <!-- ══ CLOCK ══ (always visible on both pages) -->
-  <div class="clock-block">
-    <div class="clock-top">
-      <div class="live-dot"></div>
-      <div class="clock-time" id="clkTime">--:--:--</div>
-      <div class="clock-meta">
-        <div class="clock-date" id="clkDate"></div>
-        <div class="clock-hijri" id="clkHijri"></div>
-      </div>
+  <!-- CLOCK (always visible) -->
+  <div class="clock">
+    <div class="clk-dates">
+      <div class="clk-date" id="clkDate"></div>
+      <div class="clk-hijri" id="clkHijri"></div>
     </div>
-    <div class="next-salah">
-      <div class="ns-left">
-        <div class="ns-label">Next Prayer</div>
-        <div class="ns-name" id="nsName">—</div>
-        <div class="ns-name-en" id="nsNameEn"></div>
+    <div class="clk-row">
+      <div class="dot"></div>
+      <div class="clk-time" id="clkTime">--:--:--</div>
+    </div>
+    <div class="next-row">
+      <div class="nxt-left">
+        <div class="nxt-lbl">Next Prayer</div>
+        <div class="nxt-ar" id="nxtAr">—</div>
+        <div class="nxt-en" id="nxtEn"></div>
       </div>
-      <div class="ns-cd" id="nsCd">—</div>
+      <div class="nxt-cd" id="nxtCd">—</div>
     </div>
   </div>
 
   <!-- ══ PAGE: TIMES ══ -->
   <div class="page on" id="pgTimes">
-
-    <!-- Today's prayers — vertical list -->
-    <div class="today-block">
-      <div class="today-header">
-        <div class="today-label">Today</div>
-        <div class="today-date-str" id="todayStr"></div>
+    <div class="today" id="todayBlock">
+      <div class="today-hd">
+        <div class="today-lbl">Today's Prayer Times</div>
+        <div class="today-dt" id="todayDt"></div>
       </div>
-      <div id="todayList">
-        <!-- rows injected -->
-      </div>
+      <div id="todayList"></div>
     </div>
-
-    <!-- Error -->
-    <div class="err-box" id="errBox"></div>
-
-    <!-- Month switcher -->
-    <div class="month-scroll" id="monthBar"></div>
-    <div class="fetch-status">
-      <div class="spinner" id="spinner"></div>
-      <span id="fetchMsg"></span>
-    </div>
-
-    <!-- Monthly table -->
-    <div class="table-block">
-      <div class="table-head">
-        <div class="table-ttl" id="tblTitle">Prayer Times</div>
-        <div class="table-src" id="tblSrc"></div>
-      </div>
-      <div class="tscroll">
-        <table>
-          <thead>
-            <tr>
-              <th style="text-align:left">Date</th>
-              <th>الفجر</th><th>الشروق</th><th>الظهر</th>
-              <th>العصر</th><th>المغرب</th><th>العشاء</th>
-            </tr>
-          </thead>
-          <tbody id="tblBody">
-            <tr><td colspan="7" style="text-align:center;padding:28px;color:var(--dim);font-size:.78rem">Loading…</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-  </div><!-- /pgTimes -->
+  </div>
 
   <!-- ══ PAGE: MASAJID ══ -->
   <div class="page" id="pgMasajid">
 
-    <!-- Salah selector tabs -->
-    <div class="salah-tabs" id="salahTabs"></div>
+    <div class="stabs" id="stabs"></div>
 
-    <!-- Geo -->
-    <button class="geo-btn" id="geoBtn" onclick="getLocation()">
+    <button class="geo-btn" onclick="getLocation()">
       <span>📍</span> Find Nearest Masjid
       <span class="geo-st" id="geoSt"></span>
     </button>
 
-    <!-- Manual location — single paste field -->
-    <div id="manualLocBox" style="display:block; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px 18px; margin-bottom:12px;">
-      <div style="font-size:.65rem; text-transform:uppercase; letter-spacing:.14em; color:var(--dim); margin-bottom:4px;">📍 Paste from Google Maps</div>
-      <div style="font-size:.68rem; color:var(--dim); margin-bottom:10px; line-height:1.5;">Open Google Maps → long press your spot → tap the coordinates at the top to copy → paste below</div>
-      <input id="manCoords" type="text" placeholder="23.5880, 58.3829" inputmode="decimal"
-        style="width:100%; background:var(--card2); border:1px solid var(--line); border-radius:9px;
-               color:var(--text); font-family:'DM Mono',monospace; font-size:1rem;
-               padding:12px 14px; outline:none; margin-bottom:10px; -webkit-appearance:none;"
-        oninput="liveParseCoords(this.value)">
-      <div style="display:flex; gap:8px;">
-        <button onclick="applyManualLocation()"
-          style="flex:1; background:var(--gdim); border:1px solid var(--gold); border-radius:9px;
-                 color:var(--gold2); font-family:'Inter',sans-serif; font-size:.8rem;
-                 padding:11px; cursor:pointer; font-weight:600;">
-          ✓ Set Location
-        </button>
-        <button onclick="prefillMuscat()"
-          style="background:var(--card2); border:1px solid var(--line); border-radius:9px;
-                 color:var(--dim); font-family:'Inter',sans-serif; font-size:.75rem;
-                 padding:11px 14px; cursor:pointer; white-space:nowrap;">
-          🕌 Muscat
-        </button>
+    <div class="loc-box" id="locBox">
+      <div class="loc-lbl">📍 Enter Location</div>
+      <div class="loc-hint">Open Google Maps → long press your spot → tap the coordinates at top to copy → paste below</div>
+      <input class="loc-input" id="locInput" type="text"
+        placeholder="23.5880, 58.3829" inputmode="decimal"
+        oninput="liveParse(this.value)">
+      <div class="loc-btns">
+        <button class="loc-set" onclick="applyLoc()">✓ Set Location</button>
+        <button class="loc-muscat" onclick="useMuscat()">🕌 Muscat</button>
       </div>
-      <div id="manLocMsg" style="font-size:.7rem; margin-top:8px; min-height:18px; color:var(--dim);"></div>
+      <div class="loc-msg" id="locMsg"></div>
     </div>
 
-    <!-- Saved badge -->
-    <div class="saved-badge" id="savedBadge">
+    <div class="saved" id="savedBadge">
       <span class="saved-txt" id="savedTxt"></span>
-      <button class="clear-btn" onclick="clearMasajid()">Remove</button>
+      <button class="saved-clr" onclick="clearMasajid()">Remove</button>
     </div>
 
-    <!-- Upload -->
-    <div class="upload-box" id="dropZone">
+    <div class="upload" id="dropZone">
       <input type="file" accept=".txt" id="iqFile">
       <div class="upload-icon">📋</div>
-      <div class="upload-text">
+      <div class="upload-txt">
         Tap to load your masjid iqama file
         <code>[Masjid Al-Amerat]
 lat: 23.5880, lng: 58.3829
@@ -487,45 +361,47 @@ Isha: 20:20</code>
       </div>
     </div>
 
-    <div class="masjid-list" id="masjidList"></div>
+    <div class="mc-list" id="mcList"></div>
 
   </div><!-- /pgMasajid -->
 
 </div><!-- /wrap -->
 
-<!-- BOTTOM NAV -->
-<nav class="bot-nav">
-  <button class="bn active" id="navTimes" onclick="showPage('Times')">
-    <span class="bn-icon">🕐</span>Times
+<nav class="nav">
+  <button class="nav-btn on" id="navTimes" onclick="showPage('Times')">
+    <span class="nav-icon">🕐</span>Times
   </button>
-  <button class="bn" id="navMasajid" onclick="showPage('Masajid')">
-    <span class="bn-icon">🕌</span>Masajid
+  <button class="nav-btn" id="navMasajid" onclick="showPage('Masajid')">
+    <span class="nav-icon">🕌</span>Masajid
   </button>
 </nav>
 
 <script>
-// ═══════════════════════════════
+// ═══════════════════════════
 //  CONSTANTS
-// ═══════════════════════════════
-const PRAYERS  = ['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha'];
-const AR = { Fajr:'الفجر', Sunrise:'الشروق', Dhuhr:'الظهر', Asr:'العصر', Maghrib:'المغرب', Isha:'العشاء' };
-const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-const DAYS   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-const IQ_PRAYERS = ['Fajr','Dhuhr','Asr','Maghrib','Isha'];
+// ═══════════════════════════
+const PRAYERS   = ['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha'];
+const IQ        = ['Fajr','Dhuhr','Asr','Maghrib','Isha'];
+const AR        = {Fajr:'الفجر',Sunrise:'الشروق',Dhuhr:'الظهر',Asr:'العصر',Maghrib:'المغرب',Isha:'العشاء'};
+const MONTHS    = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS      = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
-// ═══════════════════════════════
-//  APRIL 2026 — exact MARA data
-// ═══════════════════════════════
-const APRIL_2026 = [
-  {d:1, F:'04:43',Su:'05:59',D:'12:16',A:'15:43',M:'18:27',I:'19:38'},
-  {d:2, F:'04:42',Su:'05:58',D:'12:16',A:'15:43',M:'18:28',I:'19:39'},
-  {d:3, F:'04:41',Su:'05:57',D:'12:15',A:'15:43',M:'18:28',I:'19:39'},
-  {d:4, F:'04:40',Su:'05:57',D:'12:15',A:'15:42',M:'18:29',I:'19:40'},
-  {d:5, F:'04:39',Su:'05:56',D:'12:15',A:'15:42',M:'18:29',I:'19:40'},
-  {d:6, F:'04:38',Su:'05:55',D:'12:14',A:'15:42',M:'18:29',I:'19:41'},
-  {d:7, F:'04:37',Su:'05:54',D:'12:14',A:'15:42',M:'18:30',I:'19:41'},
-  {d:8, F:'04:36',Su:'05:53',D:'12:14',A:'15:41',M:'18:30',I:'19:42'},
-  {d:9, F:'04:35',Su:'05:52',D:'12:14',A:'15:41',M:'18:30',I:'19:42'},
+// GitHub raw URL for masajid file — edit masajid.txt in your repo and it updates here
+const MASAJID_URL = 'https://raw.githubusercontent.com/sultanalsibani/salah-time/main/masajid.txt';
+
+// ═══════════════════════════
+//  APRIL 2026 — exact MARA
+// ═══════════════════════════
+const APR26 = [
+  {d:1,F:'04:43',Su:'05:59',D:'12:16',A:'15:43',M:'18:27',I:'19:38'},
+  {d:2,F:'04:42',Su:'05:58',D:'12:16',A:'15:43',M:'18:28',I:'19:39'},
+  {d:3,F:'04:41',Su:'05:57',D:'12:15',A:'15:43',M:'18:28',I:'19:39'},
+  {d:4,F:'04:40',Su:'05:57',D:'12:15',A:'15:42',M:'18:29',I:'19:40'},
+  {d:5,F:'04:39',Su:'05:56',D:'12:15',A:'15:42',M:'18:29',I:'19:40'},
+  {d:6,F:'04:38',Su:'05:55',D:'12:14',A:'15:42',M:'18:29',I:'19:41'},
+  {d:7,F:'04:37',Su:'05:54',D:'12:14',A:'15:42',M:'18:30',I:'19:41'},
+  {d:8,F:'04:36',Su:'05:53',D:'12:14',A:'15:41',M:'18:30',I:'19:42'},
+  {d:9,F:'04:35',Su:'05:52',D:'12:14',A:'15:41',M:'18:30',I:'19:42'},
   {d:10,F:'04:34',Su:'05:51',D:'12:13',A:'15:41',M:'18:31',I:'19:43'},
   {d:11,F:'04:33',Su:'05:50',D:'12:13',A:'15:41',M:'18:31',I:'19:43'},
   {d:12,F:'04:32',Su:'05:49',D:'12:13',A:'15:40',M:'18:32',I:'19:44'},
@@ -549,533 +425,475 @@ const APRIL_2026 = [
   {d:30,F:'04:14',Su:'05:34',D:'12:09',A:'15:35',M:'18:39',I:'19:55'},
 ];
 
-function aprilRows() {
-  return APRIL_2026.map(r => ({
-    day:r.d, month:4, year:2026,
+// ═══════════════════════════
+//  STATE
+// ═══════════════════════════
+const pCache = {'April-2026': toRows(APR26, 4, 2026)};
+let todayRow  = null;
+let tmrwRow   = null;   // tomorrow's row for post-Isha Fajr
+let masajid   = [];
+let userLat   = null, userLng = null;
+let selSalah  = 'Fajr';
+
+function toRows(arr, month, year) {
+  return arr.map(r => ({
+    day:r.d, month, year,
     Fajr:r.F, Sunrise:r.Su, Dhuhr:r.D, Asr:r.A, Maghrib:r.M, Isha:r.I
   }));
 }
 
-// ═══════════════════════════════
-//  STATE
-// ═══════════════════════════════
-const cache = { 'April-2026': aprilRows() };
-let viewM   = new Date().getMonth();
-let viewY   = new Date().getFullYear();
-let todayRow = null;
-let masajid  = [];
-let userLat  = null, userLng = null;
-let selSalah = 'Fajr';
-
-// ═══════════════════════════════
+// ═══════════════════════════
 //  NAV
-// ═══════════════════════════════
+// ═══════════════════════════
 function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
-  document.querySelectorAll('.bn').forEach(b => b.classList.remove('active'));
-  document.getElementById('pg' + name).classList.add('on');
-  document.getElementById('nav' + name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('on'));
+  document.getElementById('pg'+name).classList.add('on');
+  document.getElementById('nav'+name).classList.add('on');
+  window.scrollTo({top:0, behavior:'instant'});
 }
 
-// ═══════════════════════════════
+// ═══════════════════════════
 //  CLOCK
-// ═══════════════════════════════
+// ═══════════════════════════
 function tick() {
   const n  = new Date();
-  const p2 = v => String(v).padStart(2, '0');
-  document.getElementById('clkTime').textContent = `${p2(n.getHours())}:${p2(n.getMinutes())}:${p2(n.getSeconds())}`;
+  const p2 = v => String(v).padStart(2,'0');
+  document.getElementById('clkTime').textContent =
+    `${p2(n.getHours())}:${p2(n.getMinutes())}:${p2(n.getSeconds())}`;
   document.getElementById('clkDate').textContent =
-    n.toLocaleDateString('en-OM', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
+    n.toLocaleDateString('en-OM',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   try {
     document.getElementById('clkHijri').textContent =
-      new Intl.DateTimeFormat('ar-SA-u-ca-islamic', { day:'numeric', month:'long', year:'numeric' }).format(n);
+      new Intl.DateTimeFormat('ar-SA-u-ca-islamic',{day:'numeric',month:'long',year:'numeric'}).format(n);
   } catch(e){}
 
-  updateNextSalah();
+  updateNext();
   updateIqCds();
-  if (n.getSeconds() === 0 && todayRow) renderTodayList();
+  if (n.getSeconds()===0 && todayRow) renderToday();
 }
 
-function updateNextSalah() {
+// ═══════════════════════════
+//  NEXT SALAH (with post-Isha → tomorrow Fajr)
+// ═══════════════════════════
+function updateNext() {
   if (!todayRow) return;
   const n       = new Date();
   const nowSecs = n.getHours()*3600 + n.getMinutes()*60 + n.getSeconds();
   const allP    = PRAYERS.filter(p => todayRow[p]);
-  const nextP   = allP.find(p => toSecs(todayRow[p]) > nowSecs);
+  let   nextP   = allP.find(p => toSecs(todayRow[p]) > nowSecs);
+  let   nextRow = todayRow;
+
+  // After Isha — show tomorrow's Fajr
+  if (!nextP && tmrwRow && tmrwRow.Fajr) {
+    nextP   = 'Fajr';
+    nextRow = tmrwRow;
+  }
 
   if (!nextP) {
-    document.getElementById('nsName').textContent   = 'All done';
-    document.getElementById('nsNameEn').textContent = '';
-    document.getElementById('nsCd').textContent     = '';
-    document.getElementById('nsCd').className       = 'ns-cd';
+    document.getElementById('nxtAr').textContent = 'الفجر';
+    document.getElementById('nxtEn').textContent = 'Tomorrow · Fajr';
+    document.getElementById('nxtCd').textContent = '';
+    document.getElementById('nxtCd').className   = 'nxt-cd';
     return;
   }
-  const diff = toSecs(todayRow[nextP]) - nowSecs;
+
+  const diff = toSecs(nextRow[nextP]) - nowSecs + (nextRow === tmrwRow ? 86400 : 0);
   const h    = Math.floor(diff/3600);
   const m    = Math.floor((diff%3600)/60);
   const s    = diff%60;
   const p2   = v => String(v).padStart(2,'0');
 
-  document.getElementById('nsName').textContent   = AR[nextP];
-  document.getElementById('nsNameEn').textContent = nextP;
-  document.getElementById('nsCd').textContent =
-    h > 0 ? `${h}:${p2(m)}:${p2(s)}` : `${p2(m)}:${p2(s)}`;
-  document.getElementById('nsCd').className =
-    'ns-cd' + (diff<=900?' soon':'') + (diff<=120?' imm':'');
+  document.getElementById('nxtAr').textContent = AR[nextP];
+  document.getElementById('nxtEn').textContent = nextRow===tmrwRow ? `Tomorrow · ${nextP}` : nextP;
+  document.getElementById('nxtCd').textContent = h>0 ? `${h}:${p2(m)}:${p2(s)}` : `${p2(m)}:${p2(s)}`;
+  document.getElementById('nxtCd').className   = 'nxt-cd'+(diff<=900?' soon':'')+(diff<=120?' imm':'');
 }
 
-// ═══════════════════════════════
+// ═══════════════════════════
 //  TODAY LIST
-// ═══════════════════════════════
-function renderTodayList() {
+// ═══════════════════════════
+function renderToday() {
   if (!todayRow) return;
   const n       = new Date();
   const nowSecs = n.getHours()*3600 + n.getMinutes()*60 + n.getSeconds();
   const allP    = PRAYERS.filter(p => todayRow[p]);
   const nextP   = allP.find(p => toSecs(todayRow[p]) > nowSecs);
 
-  document.getElementById('todayStr').textContent =
-    n.toLocaleDateString('en-OM', { weekday:'long', day:'numeric', month:'long' });
+  document.getElementById('todayDt').textContent =
+    n.toLocaleDateString('en-OM',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 
   document.getElementById('todayList').innerHTML = allP.map(p => {
-    const secs = toSecs(todayRow[p]);
-    const past = secs <= nowSecs;
+    const past = toSecs(todayRow[p]) <= nowSecs;
     const next = p === nextP;
-    return `<div class="prayer-row ${next?'next':'active'} ${past&&!next?'past':''}">
+    return `<div class="pr-row ${next?'is-next':''} ${past&&!next?'is-past':''}">
       <div class="pr-left">
-        <div class="pr-dot"></div>
-        <div class="pr-names">
+        <div class="pr-pip"></div>
+        <div>
           <div class="pr-ar">${AR[p]}</div>
-          <div class="pr-en">${p==='Sunrise'?'Sunrise':p}</div>
+          <div class="pr-en">${p}</div>
         </div>
-        ${next ? '<span class="next-badge">NEXT</span>' : ''}
       </div>
-      <div class="pr-time">${todayRow[p]}</div>
+      <div class="pr-right">
+        ${next?'<span class="next-tag">NEXT</span>':''}
+        <div class="pr-t">${todayRow[p]}</div>
+      </div>
     </div>`;
   }).join('');
 }
 
-// ═══════════════════════════════
-//  MONTH BAR
-// ═══════════════════════════════
-function buildMonthBar() {
-  const y = new Date().getFullYear();
-  document.getElementById('monthBar').innerHTML = MONTHS.map((name, i) =>
-    `<button class="mbtn ${i===viewM?'active':''} ${cache[name+'-'+y]?'cached':''}"
-      data-m="${i}" data-y="${y}" onclick="switchMonth(${i},${y},this)">${name.slice(0,3)}</button>`
-  ).join('');
-}
-
-function switchMonth(m, y, btn) {
-  viewM = m; viewY = y;
-  document.querySelectorAll('.mbtn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  btn.scrollIntoView({ inline:'center', behavior:'smooth' });
-  fetchMonth(m, y);
-}
-
-// ═══════════════════════════════
-//  FETCH — AlAdhan API
-// ═══════════════════════════════
+// ═══════════════════════════
+//  FETCH MONTH (AlAdhan)
+// ═══════════════════════════
 async function fetchMonth(m, y) {
   const key = `${MONTHS[m]}-${y}`;
-  if (cache[key]) { applyRows(cache[key], m, y); return; }
-
-  setLoading(true, `Fetching ${MONTHS[m]}…`);
-  clearErr();
-
+  if (pCache[key]) return pCache[key];
   try {
-    const url = `https://api.aladhan.com/v1/calendar/${y}/${m+1}?latitude=23.5880&longitude=58.3829&method=8`;
-    const res  = await fetch(url, { signal: AbortSignal.timeout(12000) });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const url  = `https://api.aladhan.com/v1/calendar/${y}/${m+1}?latitude=23.5880&longitude=58.3829&method=8`;
+    const res  = await fetch(url, {signal:AbortSignal.timeout(12000)});
     const json = await res.json();
-    if (json.code !== 200 || !json.data) throw new Error(json.status || 'No data');
-
-    const rows = json.data.map(day => {
-      const t = day.timings, dt = day.date.gregorian;
-      return {
-        day: parseInt(dt.day), month: m+1, year: parseInt(dt.year),
-        Fajr:    stripTz(t.Fajr),    Sunrise: stripTz(t.Sunrise),
-        Dhuhr:   stripTz(t.Dhuhr),   Asr:     stripTz(t.Asr),
-        Maghrib: stripTz(t.Maghrib), Isha:    stripTz(t.Isha),
-      };
+    if (json.code!==200||!json.data) return null;
+    const rows = json.data.map(d => {
+      const t=d.timings, g=d.date.gregorian;
+      return {day:+g.day, month:m+1, year:+g.year,
+        Fajr:tz(t.Fajr), Sunrise:tz(t.Sunrise), Dhuhr:tz(t.Dhuhr),
+        Asr:tz(t.Asr), Maghrib:tz(t.Maghrib), Isha:tz(t.Isha)};
     });
+    pCache[key] = rows;
+    return rows;
+  } catch(e) { return null; }
+}
+const tz = t => t ? t.replace(/\s*\(.*\)/,'').trim() : '';
 
-    cache[key] = rows;
-    document.querySelectorAll('.mbtn').forEach(b => {
-      if (+b.dataset.m===m && +b.dataset.y===y) b.classList.add('cached');
-    });
-    applyRows(rows, m, y);
-    setLoading(false, `✓ ${MONTHS[m]} loaded`);
-    document.getElementById('tblSrc').textContent = 'AlAdhan · Gulf Method';
-  } catch(err) {
-    setLoading(false, '');
-    showErr(`Could not load ${MONTHS[m]}: ${err.message}`);
-    document.getElementById('tblBody').innerHTML =
-      `<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--dim);font-size:.78rem">
-        ⚠ Failed — check your connection
-      </td></tr>`;
-  }
+async function loadTodayAndTomorrow() {
+  const n  = new Date();
+  const m  = n.getMonth(), y = n.getFullYear();
+  const rows = await fetchMonth(m, y);
+  if (!rows) return;
+
+  todayRow = rows.find(r => r.day===n.getDate()) || null;
+  if (todayRow) { renderToday(); updateNext(); }
+
+  // Tomorrow
+  const tmrw = new Date(n); tmrw.setDate(tmrw.getDate()+1);
+  let tmrwRows = rows;
+  if (tmrw.getMonth() !== m) tmrwRows = await fetchMonth(tmrw.getMonth(), tmrw.getFullYear()) || [];
+  tmrwRow = (tmrwRows||[]).find(r=>r.day===tmrw.getDate()) || null;
 }
 
-function stripTz(t) { return t ? t.replace(/\s*\(.*\)/, '').trim() : ''; }
-
-// ═══════════════════════════════
-//  APPLY ROWS
-// ═══════════════════════════════
-function applyRows(rows, month, year) {
-  const now   = new Date();
-  const isCur = month === now.getMonth() && year === now.getFullYear();
-
-  document.getElementById('tblTitle').textContent = `${MONTHS[month]} ${year}`;
-  if (month === 3 && year === 2026)
-    document.getElementById('tblSrc').textContent = 'Source: MARA';
-
-  document.getElementById('tblBody').innerHTML = rows.map(r => {
-    const isT = isCur && r.day === now.getDate();
-    const dow  = DAYS[new Date(r.year, r.month-1, r.day).getDay()];
-    return `<tr class="${isT?'tr-today':''}">
-      <td>${dow} ${String(r.day).padStart(2,'0')}${isT?'<span class="today-pip"></span>':''}</td>
-      <td>${r.Fajr}</td><td>${r.Sunrise}</td><td>${r.Dhuhr}</td>
-      <td>${r.Asr}</td><td>${r.Maghrib}</td><td>${r.Isha}</td>
-    </tr>`;
-  }).join('');
-
-  if (isCur) {
-    const tr = rows.find(r => r.day === now.getDate());
-    if (tr) { todayRow = tr; renderTodayList(); updateNextSalah(); }
-    setTimeout(() => {
-      const el = document.querySelector('.tr-today');
-      if (el) el.scrollIntoView({ block:'center', behavior:'smooth' });
-    }, 300);
-  }
-}
-
-// ═══════════════════════════════
+// ═══════════════════════════
 //  SALAH TABS
-// ═══════════════════════════════
-function buildSalahTabs() {
-  document.getElementById('salahTabs').innerHTML = IQ_PRAYERS.map(p =>
-    `<div class="stab ${p===selSalah?'active':''}" onclick="selectSalah('${p}')">
+// ═══════════════════════════
+function buildTabs() {
+  document.getElementById('stabs').innerHTML = IQ.map(p =>
+    `<div class="stab ${p===selSalah?'on':''}" onclick="pickSalah('${p}')">
       <span class="stab-ar">${AR[p]}</span>
       <span class="stab-en">${p}</span>
     </div>`
   ).join('');
 }
-
-function selectSalah(p) {
+function pickSalah(p) {
   selSalah = p;
-  document.querySelectorAll('.stab').forEach((b,i) =>
-    b.classList.toggle('active', IQ_PRAYERS[i] === p)
-  );
+  document.querySelectorAll('.stab').forEach((b,i)=>b.classList.toggle('on',IQ[i]===p));
   renderMasajid();
 }
 
-// ═══════════════════════════════
-//  FILE UPLOAD + LOCALSTORAGE
-// ═══════════════════════════════
-function loadMasajidText(txt, fname) {
+// ═══════════════════════════
+//  FETCH masajid.txt FROM GITHUB
+// ═══════════════════════════
+async function fetchMasajidFromGitHub() {
+  try {
+    // cache-bust so edits on GitHub appear quickly
+    const url = MASAJID_URL + '?t=' + Math.floor(Date.now()/60000);
+    const res = await fetch(url, {signal:AbortSignal.timeout(8000)});
+    if (!res.ok) throw new Error('Not found');
+    const txt = await res.text();
+    parseMasajid(txt);
+    if (masajid.length > 0) {
+      renderMasajid();
+      document.getElementById('savedTxt').textContent =
+        `✓ masajid.txt from GitHub · ${masajid.length} masjid${masajid.length>1?'s':''}`;
+      document.getElementById('savedBadge').classList.add('on');
+      document.getElementById('dropZone').style.display = 'none';
+    }
+  } catch(e) {
+    // GitHub file not found — fall back to localStorage
+    restoreLocal();
+  }
+}
+
+// ═══════════════════════════
+//  FILE UPLOAD (fallback)
+// ═══════════════════════════
+document.getElementById('iqFile').addEventListener('change', e => {
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=ev=>loadTxt(ev.target.result,f.name);
+  r.readAsText(f);
+});
+const dz=document.getElementById('dropZone');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.style.borderColor='var(--gold)'});
+dz.addEventListener('dragleave',()=>dz.style.borderColor='');
+dz.addEventListener('drop',e=>{
+  e.preventDefault();dz.style.borderColor='';
+  const f=e.dataTransfer.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=ev=>loadTxt(ev.target.result,f.name);
+  r.readAsText(f);
+});
+
+function loadTxt(txt, fname) {
   localStorage.setItem('masajid_txt', txt);
-  localStorage.setItem('masajid_fname', fname || 'file');
+  localStorage.setItem('masajid_fname', fname||'file');
   parseMasajid(txt);
+  if (masajid.length===0) {
+    const prev=txt.slice(0,300).replace(/</g,'&lt;');
+    document.getElementById('mcList').innerHTML=`
+      <div class="parse-err">
+        <div class="parse-err-ttl">⚠ Could not read any masajid</div>
+        <div class="parse-err-body">Check the format matches the example above. Here's what was read:</div>
+        <div class="parse-err-pre">${prev}</div>
+      </div>`;
+    return;
+  }
   renderMasajid();
-  showBadge(fname || 'file');
+  document.getElementById('savedTxt').textContent=`✓ ${fname||'file'} · ${masajid.length} masjid${masajid.length>1?'s':''} loaded`;
+  document.getElementById('savedBadge').classList.add('on');
 }
 
-function showBadge(fname) {
-  document.getElementById('savedTxt').textContent = `✓ ${fname} — saved`;
-  document.getElementById('savedBadge').classList.add('on');
+function restoreLocal() {
+  const txt=localStorage.getItem('masajid_txt');
+  const fn=localStorage.getItem('masajid_fname')||'saved file';
+  if (txt) { parseMasajid(txt); if(masajid.length){renderMasajid();} }
 }
 
 function clearMasajid() {
   if (!confirm('Remove saved masjid data?')) return;
   localStorage.removeItem('masajid_txt');
   localStorage.removeItem('masajid_fname');
-  masajid = [];
-  document.getElementById('masjidList').innerHTML = '';
-  document.getElementById('dropZone').style.display = '';
+  masajid=[];
+  document.getElementById('mcList').innerHTML='';
+  document.getElementById('dropZone').style.display='';
   document.getElementById('savedBadge').classList.remove('on');
 }
 
-document.getElementById('iqFile').addEventListener('change', e => {
-  const f = e.target.files[0]; if (!f) return;
-  const r = new FileReader();
-  r.onload = ev => loadMasajidText(ev.target.result, f.name);
-  r.readAsText(f);
-});
-const dz = document.getElementById('dropZone');
-dz.addEventListener('dragover', e => { e.preventDefault(); dz.style.borderColor='var(--gold)'; });
-dz.addEventListener('dragleave', () => dz.style.borderColor='');
-dz.addEventListener('drop', e => {
-  e.preventDefault(); dz.style.borderColor='';
-  const f = e.dataTransfer.files[0]; if (!f) return;
-  const r = new FileReader();
-  r.onload = ev => loadMasajidText(ev.target.result, f.name);
-  r.readAsText(f);
-});
-
-// ═══════════════════════════════
-//  PARSE MASAJID
-// ═══════════════════════════════
+// ═══════════════════════════
+//  PARSE MASAJID (forgiving)
+// ═══════════════════════════
 function parseMasajid(txt) {
-  masajid = [];
-  const nm = { fajr:'Fajr', dhuhr:'Dhuhr', asr:'Asr', maghrib:'Maghrib', isha:'Isha' };
-  for (const block of txt.split(/\n\s*\n|---+/)) {
-    const lines = block.trim().split('\n').map(l => l.trim()).filter(Boolean);
-    if (lines.length < 2) continue;
-    const name = lines[0].replace(/^\[|\]$/g,'').replace(/:$/,'').trim();
-    if (!name) continue;
-    let lat=null, lng=null; const iqama={};
-    for (const line of lines.slice(1)) {
-      const lm  = line.match(/lat\s*[:=]\s*([-\d.]+)/i);
-      const lnm = line.match(/l(?:ng|on)\s*[:=]\s*([-\d.]+)/i);
-      if (lm)  lat = parseFloat(lm[1]);
-      if (lnm) lng = parseFloat(lnm[1]);
-      for (const [,pn,pt,ap] of line.matchAll(/(Fajr|Dhuhr|Asr|Maghrib|Isha)\s*:?\s*(\d{1,2}:\d{2})\s*(AM|PM)?/gi)) {
-        const k = nm[pn.toLowerCase()];
-        if (k) iqama[k] = ap ? to24(pt, ap) : pt;
+  masajid=[];
+  if (!txt) return;
+  txt=txt.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  const pm={fajr:'Fajr',dhuhr:'Dhuhr',zuhr:'Dhuhr',asr:'Asr',maghrib:'Maghrib',isha:'Isha',"isha'a":'Isha'};
+
+  const lines=txt.split('\n');
+  let blocks=[],cur=[];
+  for (const raw of lines) {
+    const l=raw.trim();
+    if (!l||/^-{3,}$/.test(l)) { if(cur.length){blocks.push(cur);cur=[];} continue; }
+    cur.push(l);
+  }
+  if (cur.length) blocks.push(cur);
+
+  // If no blank-line separation, try to split by name lines
+  if (blocks.length===1 && blocks[0].length>3) {
+    const all=blocks[0]; const rb=[]; let cb=[];
+    for (const l of all) {
+      const hasT=/\d{1,2}:\d{2}/.test(l), hasC=/lat|lng|lon/i.test(l);
+      if (!hasT&&!hasC&&l.length>2&&cb.length>0){rb.push(cb);cb=[];}
+      cb.push(l);
+    }
+    if(cb.length) rb.push(cb);
+    if(rb.length>1) blocks=rb;
+  }
+
+  for (const block of blocks) {
+    if(!block.length) continue;
+    const name=block[0].replace(/^\[|\]$/g,'').replace(/:$/,'').trim();
+    if(!name||name.length<2) continue;
+    let lat=null,lng=null; const iqama={};
+    for (const l of block.slice(1)) {
+      const lm=l.match(/lat\s*[:=]\s*([-\d.]+)/i);
+      const nm=l.match(/l(?:ng|on)\s*[:=]\s*([-\d.]+)/i);
+      if(lm) lat=parseFloat(lm[1]);
+      if(nm) lng=parseFloat(nm[1]);
+      for (const [,pn,pt,ap] of l.matchAll(/(Fajr|Dhuhr|Zuhr|Asr|Maghrib|Isha(?:'a)?)\s*:?\s*(\d{1,2}:\d{2})\s*(AM|PM)?/gi)) {
+        const k=pm[pn.toLowerCase()];
+        if(k&&!iqama[k]) iqama[k]=ap?to24(pt,ap):pt;
       }
     }
-    if (Object.keys(iqama).length > 0) masajid.push({ name, lat, lng, iqama });
+    if(Object.keys(iqama).length>0) masajid.push({name,lat,lng,iqama});
   }
 }
 
-// ═══════════════════════════════
+// ═══════════════════════════
 //  RENDER MASAJID
-// ═══════════════════════════════
+// ═══════════════════════════
 function renderMasajid() {
-  const list = document.getElementById('masjidList');
-  if (masajid.length === 0) { list.innerHTML = ''; return; }
-  document.getElementById('dropZone').style.display = 'none';
+  const list=document.getElementById('mcList');
+  if(!masajid.length){list.innerHTML='';return;}
+  document.getElementById('dropZone').style.display='none';
 
-  const sorted = masajid.map((m, i) => ({ ...m, idx: i }));
-  if (userLat !== null) {
-    sorted.forEach(m => {
-      m.dist = (m.lat!=null && m.lng!=null) ? haversine(userLat, userLng, m.lat, m.lng) : Infinity;
+  const sorted=masajid.map((m,i)=>({...m,idx:i}));
+  if(userLat!==null){
+    sorted.forEach(m=>{
+      m.dist=(m.lat!=null&&m.lng!=null)?haversine(userLat,userLng,m.lat,m.lng):Infinity;
     });
-    sorted.sort((a, b) => a.dist - b.dist);
+    sorted.sort((a,b)=>a.dist-b.dist);
   }
 
-  const n       = new Date();
-  const nowSecs = n.getHours()*3600 + n.getMinutes()*60 + n.getSeconds();
+  const n=new Date(), ns=n.getHours()*3600+n.getMinutes()*60+n.getSeconds();
+  const p2=v=>String(v).padStart(2,'0');
 
-  list.innerHTML = sorted.map((m, si) => {
-    const nearest = userLat!==null && si===0 && m.dist<Infinity;
-    const distTxt = m.dist!==undefined && m.dist<Infinity
-      ? (m.dist<1 ? Math.round(m.dist*1000)+'m' : m.dist.toFixed(1)+'km') : '';
-    const iqTime  = m.iqama[selSalah];
-
-    let bodyHtml = '';
-    if (iqTime) {
-      const diff = toSecs(iqTime) - nowSecs;
-      const p2   = v => String(v).padStart(2,'0');
-      let cdHtml = '';
-      if (diff > 0) {
-        const h=Math.floor(diff/3600), mi=Math.floor((diff%3600)/60), s=diff%60;
-        const lbl = h>0 ? `${h}:${p2(mi)}:${p2(s)}` : `${p2(mi)}:${p2(s)}`;
-        const cls = diff<=120?'imm':diff<=900?'soon':'live';
-        cdHtml = `<div class="mc-cd-label">Iqama in</div>
-                  <div class="mc-cd ${cls}" data-iq="${m.idx}|${selSalah}">${lbl}</div>`;
+  list.innerHTML=sorted.map((m,si)=>{
+    const near=userLat!==null&&si===0&&m.dist<Infinity;
+    const dist=m.dist!==undefined&&m.dist<Infinity
+      ?(m.dist<1?Math.round(m.dist*1000)+'m':m.dist.toFixed(1)+'km'):'';
+    const iqt=m.iqama[selSalah];
+    let body='';
+    if(iqt){
+      const diff=toSecs(iqt)-ns;
+      let cd='';
+      if(diff>0){
+        const h=Math.floor(diff/3600),mi=Math.floor((diff%3600)/60),s=diff%60;
+        const lbl=h>0?`${h}:${p2(mi)}:${p2(s)}`:`${p2(mi)}:${p2(s)}`;
+        const cls=diff<=120?'imm':diff<=900?'soon':'live';
+        cd=`<div class="mc-cd-row">
+              <div class="mc-cd-lbl">Iqama in</div>
+              <div class="mc-cd ${cls}" data-iq="${m.idx}|${selSalah}">${lbl}</div>
+            </div>`;
       } else {
-        cdHtml = `<div class="mc-cd done" data-iq="${m.idx}|${selSalah}">Passed</div>`;
+        cd=`<div class="mc-cd-row">
+              <div class="mc-cd done" data-iq="${m.idx}|${selSalah}">Passed</div>
+            </div>`;
       }
-      bodyHtml = `
-        <div class="mc-iqama-label">${selSalah} Iqama</div>
-        <div class="mc-iqama-time">${iqTime}</div>
-        <div class="mc-cd-row">${cdHtml}</div>`;
+      body=`<div class="mc-iq-lbl">${selSalah} Iqama</div>
+            <div class="mc-iq-time">${iqt}</div>${cd}`;
     } else {
-      bodyHtml = `<div class="mc-no-iqama">No iqama time set</div>`;
+      body=`<div class="mc-none">No iqama time set</div>`;
     }
-
-    return `<div class="mc ${nearest?'nearest':''}">
+    return `<div class="mc ${near?'near':''}">
       <div class="mc-name-row">
         <div class="mc-name">${esc(m.name)}</div>
-        <div class="mc-right">
-          ${distTxt ? `<span class="mc-dist">${distTxt}</span>` : ''}
-          ${nearest ? '<span class="nr-tag">NEAREST</span>' : ''}
+        <div class="mc-tags">
+          ${dist?`<span class="mc-dist">${dist}</span>`:''}
+          ${near?'<span class="nr-tag">NEAREST</span>':''}
         </div>
       </div>
-      <div class="mc-body">${bodyHtml}</div>
+      <div class="mc-body">${body}</div>
     </div>`;
   }).join('');
 }
 
-// ═══════════════════════════════
-//  IQAMA COUNTDOWN UPDATE
-// ═══════════════════════════════
 function updateIqCds() {
-  if (!masajid.length) return;
-  const n       = new Date();
-  const nowSecs = n.getHours()*3600 + n.getMinutes()*60 + n.getSeconds();
-  const p2      = v => String(v).padStart(2,'0');
-
-  document.querySelectorAll('[data-iq]').forEach(el => {
-    const [idxStr, prayer] = el.dataset.iq.split('|');
-    const m = masajid[parseInt(idxStr)];
-    if (!m || !m.iqama[prayer]) return;
-    const diff = toSecs(m.iqama[prayer]) - nowSecs;
-    if (diff > 0) {
-      const h=Math.floor(diff/3600), mi=Math.floor((diff%3600)/60), s=diff%60;
-      el.textContent = h>0 ? `${h}:${p2(mi)}:${p2(s)}` : `${p2(mi)}:${p2(s)}`;
-      el.className   = 'mc-cd ' + (diff<=120?'imm':diff<=900?'soon':'live');
+  if(!masajid.length) return;
+  const n=new Date(), ns=n.getHours()*3600+n.getMinutes()*60+n.getSeconds();
+  const p2=v=>String(v).padStart(2,'0');
+  document.querySelectorAll('[data-iq]').forEach(el=>{
+    const [idx,prayer]=el.dataset.iq.split('|');
+    const m=masajid[+idx]; if(!m||!m.iqama[prayer]) return;
+    const diff=toSecs(m.iqama[prayer])-ns;
+    if(diff>0){
+      const h=Math.floor(diff/3600),mi=Math.floor((diff%3600)/60),s=diff%60;
+      el.textContent=h>0?`${h}:${p2(mi)}:${p2(s)}`:`${p2(mi)}:${p2(s)}`;
+      el.className='mc-cd '+(diff<=120?'imm':diff<=900?'soon':'live');
     } else {
-      el.textContent = 'Passed';
-      el.className   = 'mc-cd done';
+      el.textContent='Passed'; el.className='mc-cd done';
     }
   });
 }
 
-// ═══════════════════════════════
+// ═══════════════════════════
 //  GEOLOCATION
-// ═══════════════════════════════
+// ═══════════════════════════
 function getLocation() {
-  const st = document.getElementById('geoSt');
-  if (!navigator.geolocation) {
-    st.textContent = 'Not supported';
-    showManualBox('GPS not available on this browser');
-    return;
-  }
-  st.textContent = 'Locating…';
+  const st=document.getElementById('geoSt');
+  if(!navigator.geolocation){st.textContent='Not supported';return;}
+  st.textContent='Locating…';
   navigator.geolocation.getCurrentPosition(
-    pos => {
-      userLat = pos.coords.latitude;
-      userLng = pos.coords.longitude;
-      st.textContent = `✓ ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
-      localStorage.setItem('userLat', userLat);
-      localStorage.setItem('userLng', userLng);
-      document.getElementById('manualLocBox').style.display = 'none';
+    pos=>{
+      userLat=pos.coords.latitude; userLng=pos.coords.longitude;
+      st.textContent=`✓ ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
+      localStorage.setItem('uLat',userLat); localStorage.setItem('uLng',userLng);
       renderMasajid();
     },
-    err => {
-      st.textContent = '';
-      showManualBox(
-        err.code === 1
-          ? 'Location permission denied — enter manually below'
-          : 'Could not get location — enter manually below'
-      );
+    ()=>{
+      st.textContent='';
+      document.getElementById('locMsg').textContent='GPS denied — paste from Google Maps below';
     },
-    { timeout: 10000, maximumAge: 60000 }
+    {timeout:10000,maximumAge:60000}
   );
 }
 
-function showManualBox(msg) {
-  document.getElementById('manualLocBox').style.display = 'block';
-  document.getElementById('manLocMsg').textContent = msg;
-  if (userLat && userLng)
-    document.getElementById('manCoords').value = `${userLat}, ${userLng}`;
-}
-
-// Parse coords from any of these formats:
-//   "23.5880, 58.3829"
-//   "23.5880,58.3829"
-//   "23° 35' N, 58° 22' E"  (rare but handled)
-// Also extracts from a Google Maps URL if pasted
-function parseCoordString(raw) {
-  if (!raw) return null;
-  // Google Maps URL: contains @lat,lng or ?q=lat,lng or /place/.../@lat,lng
-  const urlMatch = raw.match(/@([-\d.]+),([-\d.]+)/) ||
-                   raw.match(/[?&]q=([-\d.]+),([-\d.]+)/) ||
-                   raw.match(/ll=([-\d.]+),([-\d.]+)/);
-  if (urlMatch) return { lat: parseFloat(urlMatch[1]), lng: parseFloat(urlMatch[2]) };
-
-  // Plain "lat, lng"
-  const plain = raw.match(/([-\d.]+)\s*[,\s]\s*([-\d.]+)/);
-  if (plain) return { lat: parseFloat(plain[1]), lng: parseFloat(plain[2]) };
-
+// ── MANUAL LOCATION ──
+function parseCoords(raw) {
+  if(!raw) return null;
+  const u=raw.match(/@([-\d.]+),([-\d.]+)/)||raw.match(/[?&]q=([-\d.]+),([-\d.]+)/);
+  if(u) return {lat:+u[1],lng:+u[2]};
+  const p=raw.match(/([-\d.]+)\s*[,\s]\s*([-\d.]+)/);
+  if(p) return {lat:+p[1],lng:+p[2]};
   return null;
 }
-
-function liveParseCoords(val) {
-  const parsed = parseCoordString(val);
-  const msg = document.getElementById('manLocMsg');
-  if (parsed && !isNaN(parsed.lat) && !isNaN(parsed.lng)) {
-    msg.style.color = 'var(--teal)';
-    msg.textContent = `✓ ${parsed.lat.toFixed(5)}, ${parsed.lng.toFixed(5)}`;
-  } else if (val.trim().length > 3) {
-    msg.style.color = 'var(--dim)';
-    msg.textContent = 'Paste coordinates or a Google Maps link';
-  } else {
-    msg.textContent = '';
-  }
+function liveParse(v) {
+  const p=parseCoords(v), msg=document.getElementById('locMsg');
+  if(p&&!isNaN(p.lat)&&!isNaN(p.lng)){
+    msg.style.color='var(--teal)'; msg.textContent=`✓ ${p.lat.toFixed(5)}, ${p.lng.toFixed(5)}`;
+  } else if(v.trim().length>3){
+    msg.style.color='var(--dim)'; msg.textContent='Paste coordinates or a Google Maps link';
+  } else { msg.textContent=''; }
 }
-
-function applyManualLocation() {
-  const raw    = document.getElementById('manCoords').value;
-  const parsed = parseCoordString(raw);
-  const msg    = document.getElementById('manLocMsg');
-
-  if (!parsed || isNaN(parsed.lat) || isNaN(parsed.lng) ||
-      parsed.lat < -90 || parsed.lat > 90 || parsed.lng < -180 || parsed.lng > 180) {
-    msg.style.color = 'var(--red)';
-    msg.textContent = '⚠ Could not read coordinates — try copying again';
-    return;
+function applyLoc() {
+  const p=parseCoords(document.getElementById('locInput').value);
+  const msg=document.getElementById('locMsg');
+  if(!p||isNaN(p.lat)||isNaN(p.lng)||p.lat<-90||p.lat>90){
+    msg.style.color='var(--red)'; msg.textContent='⚠ Could not read coordinates';return;
   }
-
-  userLat = parsed.lat; userLng = parsed.lng;
-  localStorage.setItem('userLat', userLat);
-  localStorage.setItem('userLng', userLng);
-  document.getElementById('geoSt').textContent = `✓ ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
-  msg.style.color = 'var(--green)';
-  msg.textContent = `✓ Location set — ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
+  userLat=p.lat; userLng=p.lng;
+  localStorage.setItem('uLat',userLat); localStorage.setItem('uLng',userLng);
+  document.getElementById('geoSt').textContent=`✓ ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
+  msg.style.color='var(--grn)'; msg.textContent=`✓ Location set`;
   renderMasajid();
 }
-
-function prefillMuscat() {
-  document.getElementById('manCoords').value = '23.5880, 58.3829';
-  liveParseCoords('23.5880, 58.3829');
+function useMuscat() {
+  document.getElementById('locInput').value='23.5880, 58.3829';
+  liveParse('23.5880, 58.3829');
 }
 
-function haversine(la1,ln1,la2,ln2) {
-  const R=6371, dLa=(la2-la1)*Math.PI/180, dLn=(ln2-ln1)*Math.PI/180;
-  const a = Math.sin(dLa/2)**2 + Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dLn/2)**2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-}
-
-// ═══════════════════════════════
+// ═══════════════════════════
 //  UTILS
-// ═══════════════════════════════
-const toSecs = t => { if (!t) return Infinity; const [h,m]=t.split(':').map(Number); return h*3600+m*60; };
-function to24(t, ap) {
-  let [h,m]=t.split(':').map(Number);
-  if (ap.toUpperCase()==='PM' && h!==12) h+=12;
-  if (ap.toUpperCase()==='AM' && h===12) h=0;
+// ═══════════════════════════
+const toSecs=t=>{if(!t)return Infinity;const[h,m]=t.split(':').map(Number);return h*3600+m*60};
+function to24(t,ap){
+  let[h,m]=t.split(':').map(Number);
+  if(ap.toUpperCase()==='PM'&&h!==12)h+=12;
+  if(ap.toUpperCase()==='AM'&&h===12)h=0;
   return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
 }
-const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const setLoading = (on, msg) => {
-  document.getElementById('spinner').className = 'spinner' + (on?' on':'');
-  document.getElementById('fetchMsg').textContent = msg;
-};
-const showErr = msg => { const b=document.getElementById('errBox'); b.textContent=msg; b.classList.add('on'); };
-const clearErr = () => document.getElementById('errBox').classList.remove('on');
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function haversine(la1,ln1,la2,ln2){
+  const R=6371,dLa=(la2-la1)*Math.PI/180,dLn=(ln2-ln1)*Math.PI/180;
+  const a=Math.sin(dLa/2)**2+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dLn/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
 
-// ═══════════════════════════════
+// ═══════════════════════════
 //  INIT
-// ═══════════════════════════════
-buildMonthBar();
-buildSalahTabs();
-fetchMonth(viewM, viewY);
-setInterval(tick, 1000);
-tick();
+// ═══════════════════════════
+buildTabs();
+loadTodayAndTomorrow();
+setInterval(tick,1000); tick();
 
-// Restore masajid from localStorage
-(function() {
-  const saved = localStorage.getItem('masajid_txt');
-  const fname = localStorage.getItem('masajid_fname') || 'saved file';
-  if (saved) { parseMasajid(saved); renderMasajid(); showBadge(fname); }
+// Restore location
+const sLat=localStorage.getItem('uLat'), sLng=localStorage.getItem('uLng');
+if(sLat&&sLng){
+  userLat=+sLat; userLng=+sLng;
+  document.getElementById('geoSt').textContent=`✓ ${(+sLat).toFixed(4)}, ${(+sLng).toFixed(4)}`;
+  document.getElementById('locInput').value=`${sLat}, ${sLng}`;
+}
 
-  // Restore saved location
-  const sLat = localStorage.getItem('userLat');
-  const sLng = localStorage.getItem('userLng');
-  if (sLat && sLng) {
-    userLat = parseFloat(sLat);
-    userLng = parseFloat(sLng);
-    document.getElementById('geoSt').textContent = `✓ ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
-    document.getElementById('manCoords').value = `${userLat}, ${userLng}`;
-    liveParseCoords(`${userLat}, ${userLng}`);
-    if (masajid.length) renderMasajid();
-  }
-})();
+// Try GitHub first, fall back to localStorage
+fetchMasajidFromGitHub();
 </script>
 </body>
 </html>
+
