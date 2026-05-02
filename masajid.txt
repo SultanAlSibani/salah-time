@@ -1,11 +1,7 @@
-[Um Al Qura]
-lat: 23.5937135, lng: 58.3664074
-Fajr: 04:41, Dhuhr: 12:45
-Asr: 16:15, Maghrib: 18:48
-Isha: 20:18
-
-[Ruwi]
-lat: 23.6100, lng: 58.5930
-Fajr: 05:05, Dhuhr: 12:50
-Asr: 16:20, Maghrib: 19:00
-Isha: 20:25
+[Masjid Al-Amerat]
+23.5979771, 58.3700881
+Fajr: athan 04:43, iqama 05:00
+Dhuhr: athan 12:16, iqama 12:36
+Asr: athan 15:43, iqama 16:00
+Maghrib: athan 18:27, iqama 18:32
+Isha: athan 19:38, iqama 20:00
