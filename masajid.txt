@@ -1,10 +1,10 @@
-[Masjid Al-Amerat]
-23.5979771, 58.3700881
-Fajr: athan 04:43, iqama 05:00
-Dhuhr: athan 12:16, iqama 12:36
-Asr: athan 15:43, iqama 16:00
-Maghrib: athan 18:27, iqama 18:32
-Isha: athan 19:38, iqama 20:00
+[Um Al Qura]
+23.5937282, 58.3665834
+Fajr: athan 04:12, iqama 04:37
+Dhuhr: 12:45
+Asr: athan 15:34, iqama 16:15
+Maghrib: athan 18:40, iqama 18:50
+Isha: athan 19:56, iqama 20:21
 
 [Masjid Al-Amerat]
 23.5979771, 58.3700881
