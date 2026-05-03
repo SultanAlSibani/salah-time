@@ -74,10 +74,10 @@ header{text-align:center;padding:28px 0 20px;border-bottom:1px solid var(--line)
   border-top:1px solid var(--line);padding-top:14px;
   display:flex;align-items:center;justify-content:space-between;gap:8px;
 }
+.nxt-left{text-align:center;}
 .nxt-lbl{font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);margin-bottom:2px;font-family:'Syne',sans-serif}
 .nxt-ar{font-family:'Amiri',serif;font-size:1.6rem;color:var(--text);line-height:1}
-.nxt-en{font-size:.65rem;color:var(--dim);margin-top:1px;font-family:'Syne',sans-serif}
-.nxt-cd{
+.nxt-en{font-size:.65rem;color:var(--dim);margin-top:1px;font-family:'Syne',sans-serif}.nxt-cd{
   font-family:'DM Mono',monospace;font-size:2.6rem;font-weight:500;
   color:var(--teal);letter-spacing:.02em;text-align:right;
 }
@@ -137,11 +137,11 @@ header{text-align:center;padding:28px 0 20px;border-bottom:1px solid var(--line)
   background:var(--card);cursor:pointer;flex-shrink:0;transition:all .18s;
 }
 .stab:active{transform:scale(.95)}
-.stab.on{background:var(--tdim);border-color:var(--teal)}
+.stab.on{background:var(--gdim);border-color:var(--gold)}
 .stab-ar{font-family:'Amiri',serif;font-size:1rem;color:var(--dim)}
 .stab-en{font-size:.55rem;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);font-family:'Syne',sans-serif}
-.stab.on .stab-ar{color:var(--teal)}
-.stab.on .stab-en{color:var(--teal)}
+.stab.on .stab-ar{color:var(--gold)}
+.stab.on .stab-en{color:var(--gold)}
 
 /* ── MASJID CARDS ── */
 .mc-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
@@ -157,16 +157,16 @@ header{text-align:center;padding:28px 0 20px;border-bottom:1px solid var(--line)
 }
 .mc-name{font-size:.9rem;font-weight:600;color:var(--text);font-family:'Syne',sans-serif}
 .mc-tags{display:flex;align-items:center;gap:7px;flex-shrink:0}
-.mc-dist{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--teal)}
+.mc-dist{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--gold)}
 .nr-tag{
   font-size:.52rem;font-weight:700;letter-spacing:.07em;
-  background:var(--tdim);color:var(--teal);
-  border:1px solid rgba(56,201,173,.25);border-radius:7px;padding:2px 6px;
+  background:var(--gdim);color:var(--gold);
+  border:1px solid rgba(232,184,75,.4);border-radius:7px;padding:2px 6px;
   font-family:'Syne',sans-serif;
 }
 
 .mc-body{padding:14px 16px}
-.mc-iq-lbl{font-size:.58rem;text-transform:uppercase;letter-spacing:.13em;color:var(--dim);margin-bottom:4px;font-family:'Syne',sans-serif}
+.mc-iq-lbl{font-size:.58rem;text-transform:uppercase;letter-spacing:.13em;color:var(--gold);margin-bottom:4px;font-family:'Syne',sans-serif}
 .mc-iq-time{font-family:'DM Mono',monospace;font-size:2.4rem;font-weight:500;
   color:#ffffff;letter-spacing:.02em;line-height:1;margin-bottom:10px}
 
@@ -345,7 +345,7 @@ header{text-align:center;padding:28px 0 20px;border-bottom:1px solid var(--line)
       <div class="clk-time" id="clkTime">--:--:--</div>
     </div>
     <div class="next-row">
-      <div>
+      <div class="nxt-left">
         <div class="nxt-lbl">Next Prayer</div>
         <div class="nxt-ar" id="nxtAr">—</div>
         <div class="nxt-en" id="nxtEn"></div>
