@@ -1,4 +1,13 @@
-[Um Al Qura]
+[Umm Al Qura Mosque
+جامع أم القرى - العذيبة]
+23.5937282, 58.3665834
+Fajr: athan 04:12, iqama 04:37
+Dhuhr: 12:45
+Asr: athan 15:34, iqama 16:15
+Maghrib: athan 18:40, iqama 18:50
+Isha: athan 19:56, iqama 20:21
+
+[Masjid- Abdullah bin Hamid Al-Ghabshi]
 23.5937282, 58.3665834
 Fajr: athan 04:12, iqama 04:37
 Dhuhr: 12:45
