@@ -7,7 +7,8 @@ Asr: athan 15:34, iqama 16:15
 Maghrib: athan 18:40, iqama 18:50
 Isha: athan 19:56, iqama 20:21
 
-[Masjid- Abdullah bin Hamid Al-Ghabshi]
+[Masjid- Abdullah bin Hamid Al-Ghabshi
+مسجد عبدالله بن حميد الغابشي]
 23.5983019, 58.3798510
 Fajr: athan 04:12, iqama 04:37
 Dhuhr: 12:45
