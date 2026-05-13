@@ -9,7 +9,7 @@ Isha: athan 19:56, iqama 20:21
 
 [Masjid- Abdullah bin Hamid Al-Ghabshi
 مسجد عبدالله بن حميد الغابشي]
-23.5983126, 58.3798439
+23.5983132, 58.3798460
 Fajr: athan 04:03, iqama 04:33
 Dhuhr: 12:45
 Asr: athan 15:32, iqama 16:05
