@@ -549,7 +549,7 @@ let todayRow = null, tmrwRow = null;
 let masajid  = [];
 let userLat  = null, userLng = null;
 let selSalah = 'Fajr';
-let workerUrl = localStorage.getItem('workerUrl') || '';
+let workerUrl = localStorage.getItem('workerUrl') || 'https://mara-proxy.alsibanisultan.workers.dev';
 
 // ═══════════════════════════
 //  NAV
@@ -1065,11 +1065,18 @@ function haversine(la1,ln1,la2,ln2){
 //  INIT
 // ═══════════════════════════
 buildTabs();
+
+// Clear any AlAdhan-cached months (keep only embedded Apr/May)
+Object.keys(pCache).forEach(k => {
+  if (k !== 'April-2026' && k !== 'May-2026') delete pCache[k];
+});
+
 loadTodayAndTomorrow();
 setInterval(tick,1000); tick();
 
-// Restore worker URL
-if(workerUrl) document.getElementById('workerUrl').value=workerUrl;
+// Restore worker URL input field
+const wuInput = document.getElementById('workerUrl');
+if (wuInput) wuInput.value = workerUrl;
 
 // Restore location
 const sLat=localStorage.getItem('uLat'),sLng=localStorage.getItem('uLng');
