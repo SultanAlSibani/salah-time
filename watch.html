@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="watch-manifest.json">
+<title>Salah</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=DM+Mono:wght@500&family=Syne:wght@500;600;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  width: 100%; height: 100%;
+  background: #000;
+  overflow: hidden;
+  font-family: 'Syne', sans-serif;
+}
+
+.screen {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  /* Circular-safe padding — keeps content inside the inscribed circle */
+  padding: 18% 14%;
+  position: relative;
+}
+
+/* Subtle radial glow */
+.screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 35%, rgba(232,184,75,.08), transparent 65%);
+  pointer-events: none;
+}
+
+.clock {
+  font-family: 'DM Mono', monospace;
+  font-size: 5.2vw;
+  color: #5a6577;
+  letter-spacing: .05em;
+  margin-bottom: 2vh;
+}
+
+.label {
+  font-size: 2.6vw;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: #e8b84b;
+  margin-bottom: 1.5vh;
+  font-weight: 600;
+}
+
+.prayer-ar {
+  font-family: 'Amiri', serif;
+  font-size: 9vw;
+  color: #ffd670;
+  line-height: 1;
+  text-shadow: 0 0 30px rgba(232,184,75,.4);
+  margin-bottom: .5vh;
+}
+
+.prayer-en {
+  font-size: 2.8vw;
+  color: #5a6577;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 3vh;
+}
+
+.countdown {
+  font-family: 'DM Mono', monospace;
+  font-size: 11vw;
+  font-weight: 500;
+  color: #38c9ad;
+  letter-spacing: .02em;
+  line-height: 1;
+}
+.countdown.soon { color: #f09348; }
+.countdown.imm  { color: #e05c5c; animation: pulse .9s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+.date-row {
+  margin-top: 2.5vh;
+  font-size: 2.3vw;
+  color: #3a4250;
+  letter-spacing: .05em;
+}
+
+.offline-pip {
+  position: absolute;
+  bottom: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2vw;
+  color: #3a4250;
+  letter-spacing: .1em;
+}
+.offline-pip.live { color: #43c678; }
+</style>
+</head>
+<body>
+
+<div class="screen">
+  <div class="clock" id="clk">--:--:--</div>
+  <div class="label">Next Salah</div>
+  <div class="prayer-ar" id="prAr">—</div>
+  <div class="prayer-en" id="prEn"></div>
+  <div class="countdown" id="cd">--:--:--</div>
+  <div class="date-row" id="dateRow"></div>
+  <div class="offline-pip" id="pip">●</div>
+</div>
+
+<script>
+const PRAYERS = ['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha'];
+const AR = {Fajr:'الفجر',Sunrise:'الشروق',Dhuhr:'الظهر',Asr:'العصر',Maghrib:'المغرب',Isha:'العشاء'};
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const WORKER_URL = 'https://mara-proxy.alsibanisultan.workers.dev';
+
+// Embedded fallback data (April & May 2026 exact MARA)
+const APR26=[{d:1,F:'04:43',Su:'05:59',D:'12:16',A:'15:43',M:'18:27',I:'19:38'},{d:2,F:'04:42',Su:'05:58',D:'12:16',A:'15:43',M:'18:28',I:'19:39'},{d:3,F:'04:41',Su:'05:57',D:'12:15',A:'15:43',M:'18:28',I:'19:39'},{d:4,F:'04:40',Su:'05:57',D:'12:15',A:'15:42',M:'18:29',I:'19:40'},{d:5,F:'04:39',Su:'05:56',D:'12:15',A:'15:42',M:'18:29',I:'19:40'},{d:6,F:'04:38',Su:'05:55',D:'12:14',A:'15:42',M:'18:29',I:'19:41'},{d:7,F:'04:37',Su:'05:54',D:'12:14',A:'15:42',M:'18:30',I:'19:41'},{d:8,F:'04:36',Su:'05:53',D:'12:14',A:'15:41',M:'18:30',I:'19:42'},{d:9,F:'04:35',Su:'05:52',D:'12:14',A:'15:41',M:'18:30',I:'19:42'},{d:10,F:'04:34',Su:'05:51',D:'12:13',A:'15:41',M:'18:31',I:'19:43'},{d:11,F:'04:33',Su:'05:50',D:'12:13',A:'15:41',M:'18:31',I:'19:43'},{d:12,F:'04:32',Su:'05:49',D:'12:13',A:'15:40',M:'18:32',I:'19:44'},{d:13,F:'04:31',Su:'05:48',D:'12:13',A:'15:40',M:'18:32',I:'19:44'},{d:14,F:'04:30',Su:'05:47',D:'12:12',A:'15:40',M:'18:32',I:'19:45'},{d:15,F:'04:29',Su:'05:46',D:'12:12',A:'15:39',M:'18:33',I:'19:46'},{d:16,F:'04:28',Su:'05:45',D:'12:12',A:'15:39',M:'18:33',I:'19:46'},{d:17,F:'04:26',Su:'05:44',D:'12:12',A:'15:39',M:'18:34',I:'19:47'},{d:18,F:'04:25',Su:'05:44',D:'12:11',A:'15:39',M:'18:34',I:'19:47'},{d:19,F:'04:24',Su:'05:43',D:'12:11',A:'15:38',M:'18:35',I:'19:48'},{d:20,F:'04:23',Su:'05:42',D:'12:11',A:'15:38',M:'18:35',I:'19:48'},{d:21,F:'04:22',Su:'05:41',D:'12:11',A:'15:38',M:'18:35',I:'19:49'},{d:22,F:'04:21',Su:'05:40',D:'12:10',A:'15:37',M:'18:36',I:'19:50'},{d:23,F:'04:20',Su:'05:39',D:'12:10',A:'15:37',M:'18:36',I:'19:50'},{d:24,F:'04:19',Su:'05:39',D:'12:10',A:'15:37',M:'18:37',I:'19:51'},{d:25,F:'04:18',Su:'05:38',D:'12:10',A:'15:36',M:'18:37',I:'19:51'},{d:26,F:'04:18',Su:'05:37',D:'12:10',A:'15:36',M:'18:38',I:'19:52'},{d:27,F:'04:17',Su:'05:36',D:'12:10',A:'15:36',M:'18:38',I:'19:53'},{d:28,F:'04:16',Su:'05:36',D:'12:09',A:'15:36',M:'18:38',I:'19:53'},{d:29,F:'04:15',Su:'05:35',D:'12:09',A:'15:35',M:'18:39',I:'19:54'},{d:30,F:'04:14',Su:'05:34',D:'12:09',A:'15:35',M:'18:39',I:'19:55'}];
+const MAY26=[{d:1,F:'04:13',Su:'05:33',D:'12:09',A:'15:35',M:'18:40',I:'19:55'},{d:2,F:'04:12',Su:'05:33',D:'12:09',A:'15:34',M:'18:40',I:'19:56'},{d:3,F:'04:11',Su:'05:32',D:'12:09',A:'15:34',M:'18:41',I:'19:57'},{d:4,F:'04:10',Su:'05:31',D:'12:09',A:'15:34',M:'18:41',I:'19:57'},{d:5,F:'04:09',Su:'05:31',D:'12:09',A:'15:34',M:'18:42',I:'19:58'},{d:6,F:'04:09',Su:'05:30',D:'12:09',A:'15:33',M:'18:42',I:'19:58'},{d:7,F:'04:08',Su:'05:29',D:'12:08',A:'15:33',M:'18:43',I:'19:59'},{d:8,F:'04:07',Su:'05:29',D:'12:08',A:'15:33',M:'18:43',I:'20:00'},{d:9,F:'04:06',Su:'05:28',D:'12:08',A:'15:32',M:'18:43',I:'20:01'},{d:10,F:'04:05',Su:'05:28',D:'12:08',A:'15:32',M:'18:44',I:'20:01'},{d:11,F:'04:05',Su:'05:27',D:'12:08',A:'15:32',M:'18:44',I:'20:02'},{d:12,F:'04:04',Su:'05:27',D:'12:08',A:'15:32',M:'18:45',I:'20:03'},{d:13,F:'04:03',Su:'05:26',D:'12:08',A:'15:32',M:'18:45',I:'20:03'},{d:14,F:'04:03',Su:'05:26',D:'12:08',A:'15:31',M:'18:46',I:'20:04'},{d:15,F:'04:02',Su:'05:25',D:'12:08',A:'15:31',M:'18:46',I:'20:05'},{d:16,F:'04:01',Su:'05:25',D:'12:08',A:'15:31',M:'18:47',I:'20:05'},{d:17,F:'04:01',Su:'05:24',D:'12:08',A:'15:31',M:'18:47',I:'20:06'},{d:18,F:'04:00',Su:'05:24',D:'12:08',A:'15:31',M:'18:48',I:'20:07'},{d:19,F:'03:59',Su:'05:23',D:'12:08',A:'15:30',M:'18:48',I:'20:07'},{d:20,F:'03:59',Su:'05:23',D:'12:08',A:'15:30',M:'18:49',I:'20:08'},{d:21,F:'03:58',Su:'05:23',D:'12:08',A:'15:30',M:'18:49',I:'20:09'},{d:22,F:'03:58',Su:'05:22',D:'12:09',A:'15:30',M:'18:50',I:'20:09'},{d:23,F:'03:57',Su:'05:22',D:'12:09',A:'15:30',M:'18:50',I:'20:10'},{d:24,F:'03:57',Su:'05:22',D:'12:09',A:'15:30',M:'18:51',I:'20:11'},{d:25,F:'03:56',Su:'05:21',D:'12:09',A:'15:30',M:'18:51',I:'20:11'},{d:26,F:'03:56',Su:'05:21',D:'12:09',A:'15:29',M:'18:52',I:'20:12'},{d:27,F:'03:56',Su:'05:21',D:'12:09',A:'15:29',M:'18:52',I:'20:12'},{d:28,F:'03:55',Su:'05:21',D:'12:09',A:'15:29',M:'18:53',I:'20:13'},{d:29,F:'03:55',Su:'05:20',D:'12:09',A:'15:29',M:'18:53',I:'20:14'},{d:30,F:'03:54',Su:'05:20',D:'12:09',A:'15:29',M:'18:53',I:'20:14'},{d:31,F:'03:54',Su:'05:20',D:'12:10',A:'15:29',M:'18:54',I:'20:15'}];
+
+function toRows(arr,month,year){return arr.map(r=>({day:r.d,month,year,Fajr:r.F,Sunrise:r.Su,Dhuhr:r.D,Asr:r.A,Maghrib:r.M,Isha:r.I}));}
+const cache = {'April-2026':toRows(APR26,4,2026),'May-2026':toRows(MAY26,5,2026)};
+
+let todayRow=null, tmrwRow=null, isLive=false;
+
+const toSecs=t=>{if(!t)return Infinity;const[h,m]=t.split(':').map(Number);return h*3600+m*60};
+const tz=t=>t?t.replace(/\s*\(.*\)/,'').trim():'';
+
+async function fetchMonth(m,y){
+  const key=`${MONTHS[m]}-${y}`;
+  if(cache[key]) return cache[key];
+  try{
+    const res=await fetch(`${WORKER_URL}?month=${m+1}&year=${y}`,{signal:AbortSignal.timeout(8000)});
+    const json=await res.json();
+    if(json.ok&&json.rows?.length>0){
+      const rows=json.rows.map(r=>({day:r.d,month:m+1,year:y,Fajr:r.F,Sunrise:r.Su,Dhuhr:r.D,Asr:r.A,Maghrib:r.M,Isha:r.I}));
+      cache[key]=rows; isLive=true; return rows;
+    }
+  }catch(e){}
+  try{
+    const res=await fetch(`https://api.aladhan.com/v1/calendar/${y}/${m+1}?latitude=23.5880&longitude=58.3829&method=8`,{signal:AbortSignal.timeout(10000)});
+    const json=await res.json();
+    if(json.code===200&&json.data){
+      const rows=json.data.map(d=>{
+        const t=d.timings,g=d.date.gregorian;
+        return{day:+g.day,month:m+1,year:+g.year,Fajr:tz(t.Fajr),Sunrise:tz(t.Sunrise),Dhuhr:tz(t.Dhuhr),Asr:tz(t.Asr),Maghrib:tz(t.Maghrib),Isha:tz(t.Isha)};
+      });
+      cache[key]=rows; return rows;
+    }
+  }catch(e){}
+  return null;
+}
+
+async function loadData(){
+  const n=new Date(), m=n.getMonth(), y=n.getFullYear();
+  const rows=await fetchMonth(m,y);
+  if(rows) todayRow=rows.find(r=>r.day===n.getDate())||null;
+  const tmrw=new Date(n); tmrw.setDate(tmrw.getDate()+1);
+  const tmrwRows = tmrw.getMonth()!==m ? await fetchMonth(tmrw.getMonth(),tmrw.getFullYear()) : rows;
+  tmrwRow=(tmrwRows||[]).find(r=>r.day===tmrw.getDate())||null;
+}
+
+function render(){
+  const n=new Date(), p2=v=>String(v).padStart(2,'0');
+  document.getElementById('clk').textContent=`${p2(n.getHours())}:${p2(n.getMinutes())}:${p2(n.getSeconds())}`;
+  document.getElementById('dateRow').textContent=n.toLocaleDateString('en-OM',{weekday:'short',day:'numeric',month:'short'});
+  document.getElementById('pip').className='offline-pip'+(isLive?' live':'');
+
+  if(!todayRow) return;
+  const ns=n.getHours()*3600+n.getMinutes()*60+n.getSeconds();
+  const allP=['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha'].filter(p=>todayRow[p]);
+  let nextP=allP.find(p=>toSecs(todayRow[p])>ns);
+  let nextRow=todayRow, isTmrw=false;
+
+  if(!nextP && tmrwRow && tmrwRow.Fajr){ nextP='Fajr'; nextRow=tmrwRow; isTmrw=true; }
+  if(!nextP) return;
+
+  const diff=toSecs(nextRow[nextP])-ns+(isTmrw?86400:0);
+  const h=Math.floor(diff/3600), m=Math.floor((diff%3600)/60), s=diff%60;
+
+  document.getElementById('prAr').textContent=AR[nextP];
+  document.getElementById('prEn').textContent=isTmrw?`Tomorrow · ${nextP}`:nextP;
+  const cdEl=document.getElementById('cd');
+  cdEl.textContent = h>0 ? `${h}:${p2(m)}:${p2(s)}` : `${p2(m)}:${p2(s)}`;
+  cdEl.className='countdown'+(diff<=900?' soon':'')+(diff<=120?' imm':'');
+}
+
+setInterval(render,1000);
+loadData().then(render);
+setInterval(loadData,10*60*1000); // refresh data every 10 min
+</script>
+</body>
+</html>
