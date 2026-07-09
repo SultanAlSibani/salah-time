@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="watch-manifest.json">
-<title>Salah</title>
+<title>Salah Time</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=DM+Mono:wght@500&family=Syne:wght@500;600;700&display=swap');
 
@@ -177,26 +177,47 @@ async function fetchWithTimeout(url, ms){
 async function fetchMonth(m,y){
   const key=`${MONTHS[m]}-${y}`;
   if(cache[key]) return cache[key];
+
+  // Check persistent cache first — instant
   try{
+    const stored=localStorage.getItem('wdata_'+key);
+    if(stored){
+      const rows=JSON.parse(stored);
+      cache[key]=rows;
+      isLive=true;
+      return rows;
+    }
+  }catch(e){}
+
+  // Race Worker + AlAdhan simultaneously
+  const attempts=[];
+  attempts.push((async()=>{
     const res=await fetchWithTimeout(`${WORKER_URL}?month=${m+1}&year=${y}`, 15000);
     const json=await res.json();
     if(json.ok&&json.rows?.length>0){
-      const rows=json.rows.map(r=>({day:r.d,month:m+1,year:y,Fajr:r.F,Sunrise:r.Su,Dhuhr:r.D,Asr:r.A,Maghrib:r.M,Isha:r.I}));
-      cache[key]=rows; isLive=true; return rows;
+      isLive=true;
+      return json.rows.map(r=>({day:r.d,month:m+1,year:y,Fajr:r.F,Sunrise:r.Su,Dhuhr:r.D,Asr:r.A,Maghrib:r.M,Isha:r.I}));
     }
-  }catch(e){}
-  try{
-    const res=await fetchWithTimeout(`https://api.aladhan.com/v1/calendar/${y}/${m+1}?latitude=23.5880&longitude=58.3829&method=8`, 18000);
+    throw new Error('empty');
+  })());
+  attempts.push((async()=>{
+    const res=await fetchWithTimeout(`https://api.aladhan.com/v1/calendar/${y}/${m+1}?latitude=23.5880&longitude=58.3829&method=8`, 15000);
     const json=await res.json();
-    if(json.code===200&&json.data){
-      const rows=json.data.map(d=>{
-        const t=d.timings,g=d.date.gregorian;
-        return{day:+g.day,month:m+1,year:+g.year,Fajr:tz(t.Fajr),Sunrise:tz(t.Sunrise),Dhuhr:tz(t.Dhuhr),Asr:tz(t.Asr),Maghrib:tz(t.Maghrib),Isha:tz(t.Isha)};
-      });
-      cache[key]=rows; return rows;
-    }
-  }catch(e){}
-  return null;
+    if(json.code!==200||!json.data) throw new Error('empty');
+    return json.data.map(d=>{
+      const t=d.timings,g=d.date.gregorian;
+      return{day:+g.day,month:m+1,year:+g.year,Fajr:tz(t.Fajr),Sunrise:tz(t.Sunrise),Dhuhr:tz(t.Dhuhr),Asr:tz(t.Asr),Maghrib:tz(t.Maghrib),Isha:tz(t.Isha)};
+    });
+  })());
+
+  try{
+    const rows=await Promise.any(attempts);
+    cache[key]=rows;
+    try{ localStorage.setItem('wdata_'+key, JSON.stringify(rows)); }catch(e){}
+    return rows;
+  }catch(e){
+    return null;
+  }
 }
 
 async function loadData(){
