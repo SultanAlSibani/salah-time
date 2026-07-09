@@ -658,32 +658,73 @@ async function fetchMonth(m,y) {
   const key=`${MONTHS[m]}-${y}`;
   if(pCache[key]) return pCache[key];
 
-  // Try Cloudflare Worker first
-  if(workerUrl) {
-    try {
+  // Check persistent cache first (instant, no network)
+  const stored=localStorage.getItem('pdata_'+key);
+  if(stored){
+    try{
+      const rows=JSON.parse(stored);
+      pCache[key]=rows;
+      // Refresh in background silently for next time, don't block UI
+      refreshMonthInBackground(m,y,key);
+      return rows;
+    }catch(e){}
+  }
+
+  // No cache — race Worker and AlAdhan simultaneously, use whichever responds first
+  const attempts=[];
+
+  if(workerUrl){
+    attempts.push((async()=>{
       const url=`${workerUrl.replace(/\/$/,'')}?month=${m+1}&year=${y}`;
       const res=await fetch(url,{signal:AbortSignal.timeout(15000)});
       const json=await res.json();
       if(json.ok&&json.rows&&json.rows.length>0){
-        const rows=json.rows.map(r=>({day:r.d,month:m+1,year:y,Fajr:r.F,Sunrise:r.Su,Dhuhr:r.D,Asr:r.A,Maghrib:r.M,Isha:r.I}));
-        pCache[key]=rows; return rows;
+        return json.rows.map(r=>({day:r.d,month:m+1,year:y,Fajr:r.F,Sunrise:r.Su,Dhuhr:r.D,Asr:r.A,Maghrib:r.M,Isha:r.I}));
       }
-    }catch(e){}
+      throw new Error('empty');
+    })());
   }
 
-  // Fallback: AlAdhan
-  try {
-    const res=await fetch(`https://api.aladhan.com/v1/calendar/${y}/${m+1}?latitude=23.5880&longitude=58.3829&method=8`,{signal:AbortSignal.timeout(18000)});
+  attempts.push((async()=>{
+    const res=await fetch(`https://api.aladhan.com/v1/calendar/${y}/${m+1}?latitude=23.5880&longitude=58.3829&method=8`,{signal:AbortSignal.timeout(15000)});
     const json=await res.json();
-    if(json.code!==200||!json.data) return null;
-    const rows=json.data.map(d=>{
+    if(json.code!==200||!json.data) throw new Error('empty');
+    return json.data.map(d=>{
       const t=d.timings,g=d.date.gregorian;
       return{day:+g.day,month:m+1,year:+g.year,
         Fajr:tz(t.Fajr),Sunrise:tz(t.Sunrise),Dhuhr:tz(t.Dhuhr),
         Asr:tz(t.Asr),Maghrib:tz(t.Maghrib),Isha:tz(t.Isha)};
     });
-    pCache[key]=rows; return rows;
-  }catch(e){return null;}
+  })());
+
+  try{
+    const rows=await Promise.any(attempts);
+    pCache[key]=rows;
+    try{ localStorage.setItem('pdata_'+key, JSON.stringify(rows)); }catch(e){}
+    return rows;
+  }catch(e){
+    return null;
+  }
+}
+
+async function refreshMonthInBackground(m,y,key){
+  try{
+    let rows=null;
+    if(workerUrl){
+      try{
+        const url=`${workerUrl.replace(/\/$/,'')}?month=${m+1}&year=${y}`;
+        const res=await fetch(url,{signal:AbortSignal.timeout(15000)});
+        const json=await res.json();
+        if(json.ok&&json.rows&&json.rows.length>0){
+          rows=json.rows.map(r=>({day:r.d,month:m+1,year:y,Fajr:r.F,Sunrise:r.Su,Dhuhr:r.D,Asr:r.A,Maghrib:r.M,Isha:r.I}));
+        }
+      }catch(e){}
+    }
+    if(rows){
+      pCache[key]=rows;
+      try{ localStorage.setItem('pdata_'+key, JSON.stringify(rows)); }catch(e){}
+    }
+  }catch(e){}
 }
 const tz=t=>t?t.replace(/\s*\(.*\)/,'').trim():'';
 
