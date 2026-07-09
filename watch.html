@@ -161,11 +161,24 @@ let todayRow=null, tmrwRow=null, isLive=false;
 const toSecs=t=>{if(!t)return Infinity;const[h,m]=t.split(':').map(Number);return h*3600+m*60};
 const tz=t=>t?t.replace(/\s*\(.*\)/,'').trim():'';
 
+async function fetchWithTimeout(url, ms){
+  const controller = new AbortController();
+  const timer = setTimeout(()=>controller.abort(), ms);
+  try{
+    const res = await fetch(url, {signal: controller.signal});
+    clearTimeout(timer);
+    return res;
+  }catch(e){
+    clearTimeout(timer);
+    throw e;
+  }
+}
+
 async function fetchMonth(m,y){
   const key=`${MONTHS[m]}-${y}`;
   if(cache[key]) return cache[key];
   try{
-    const res=await fetch(`${WORKER_URL}?month=${m+1}&year=${y}`,{signal:AbortSignal.timeout(8000)});
+    const res=await fetchWithTimeout(`${WORKER_URL}?month=${m+1}&year=${y}`, 15000);
     const json=await res.json();
     if(json.ok&&json.rows?.length>0){
       const rows=json.rows.map(r=>({day:r.d,month:m+1,year:y,Fajr:r.F,Sunrise:r.Su,Dhuhr:r.D,Asr:r.A,Maghrib:r.M,Isha:r.I}));
@@ -173,7 +186,7 @@ async function fetchMonth(m,y){
     }
   }catch(e){}
   try{
-    const res=await fetch(`https://api.aladhan.com/v1/calendar/${y}/${m+1}?latitude=23.5880&longitude=58.3829&method=8`,{signal:AbortSignal.timeout(10000)});
+    const res=await fetchWithTimeout(`https://api.aladhan.com/v1/calendar/${y}/${m+1}?latitude=23.5880&longitude=58.3829&method=8`, 18000);
     const json=await res.json();
     if(json.code===200&&json.data){
       const rows=json.data.map(d=>{
@@ -189,7 +202,17 @@ async function fetchMonth(m,y){
 async function loadData(){
   const n=new Date(), m=n.getMonth(), y=n.getFullYear();
   const rows=await fetchMonth(m,y);
-  if(rows) todayRow=rows.find(r=>r.day===n.getDate())||null;
+  if(rows){
+    todayRow=rows.find(r=>r.day===n.getDate())||null;
+  } else if(!todayRow){
+    // No data at all yet — show waiting state and retry shortly
+    document.getElementById('prAr').textContent='...';
+    document.getElementById('prEn').textContent='Waiting for signal';
+    document.getElementById('athanTime').textContent='';
+    document.getElementById('cd').textContent='--:--';
+    setTimeout(loadData, 8000);
+    return;
+  }
   const tmrw=new Date(n); tmrw.setDate(tmrw.getDate()+1);
   const tmrwRows = tmrw.getMonth()!==m ? await fetchMonth(tmrw.getMonth(),tmrw.getFullYear()) : rows;
   tmrwRow=(tmrwRows||[]).find(r=>r.day===tmrw.getDate())||null;
