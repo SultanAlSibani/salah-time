@@ -7,7 +7,7 @@ Asr: 16:15
 Maghrib: athan 18:40, iqama 18:50
 Isha: athan 19:56, iqama 20:21
 
-[Masjid- Abdullah bin Hamid Al-Ghabshi
+[Masjid - Abdullah bin Hamid Al-Ghabshi
 مسجد عبدالله بن حميد الغابشي]
 23.5983132, 58.3798460
 Fajr: athan 04:03, iqama 04:33
@@ -15,3 +15,11 @@ Dhuhr: 12:45
 Asr: athan 15:32, iqama 16:05
 Maghrib: athan 18:46, iqama 18:54
 Isha: athan 20:04, iqama 20:26
+
+[Masjid Rayyan - جامع الريان]
+23.5959315, 58.3722271
+Fajr: athan 04:35, iqama 05:00
+Dhuhr: 12:45
+Asr: athan 15:37, iqama 16:02
+Maghrib: athan 18:23, iqama 18:31
+Isha: athan 19:34, iqama 20:54
