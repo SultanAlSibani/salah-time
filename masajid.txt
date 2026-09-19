@@ -22,3 +22,11 @@ Dhuhr: 12:45
 Asr: athan 15:37, iqama 16:02
 Maghrib: athan 18:23, iqama 18:31
 Isha: athan 19:34, iqama 19:54
+
+[Al Rahman Mosque - جامع الرحمن]
+23.6032059, 58.3643937
+Fajr: athan 04:39, iqama 04:59
+Dhuhr: athan 12:06, iqama 12:26
+Asr: athan 15:32, iqama 15:52
+Maghrib: athan 18:12, iqama 18:19
+Isha: athan 19:22, iqama 19:4
